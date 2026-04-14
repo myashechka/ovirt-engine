@@ -41,6 +41,7 @@ public enum StepEnum {
     UPDATE_OVF,
     DEACTIVATE_STORAGE_DOMAIN,
     EXTEND_DISK,
+    DELETE_DISK_FROM_DOMAIN,
 
     /**
      * Maps VDSM tasks type to {@code StepEnum} so it can be resolvable as readable description

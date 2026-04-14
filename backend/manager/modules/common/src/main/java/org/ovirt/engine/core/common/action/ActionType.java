@@ -179,6 +179,7 @@ public enum ActionType {
     CreateImageTemplate(209, QuotaDependency.STORAGE),
     RemoveSnapshot(210, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.STORAGE),
     RemoveImage(211, QuotaDependency.STORAGE),
+    RemoveDiskFromDomain(7001, QuotaDependency.STORAGE),
     RemoveAllVmImages(212, QuotaDependency.STORAGE),
     AddImageFromScratch(213, QuotaDependency.STORAGE),
     RemoveTemplateSnapshot(215, QuotaDependency.STORAGE),

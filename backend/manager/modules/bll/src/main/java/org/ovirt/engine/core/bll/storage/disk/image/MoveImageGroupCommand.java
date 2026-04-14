@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -46,9 +47,9 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         // other operations on the image shouldn't be dependent and wait for it.
         removeImageParams.setEntityInfo(new EntityInfo(VdcObjectType.Disk, Guid.newGuid()));
         ActionReturnValue returnValue = runInternalAction(
-                ActionType.RemoveImage,
+                ActionType.RemoveDiskFromDomain,
                 removeImageParams,
-                cloneContextAndDetachFromParent());
+                ExecutionHandler.createInternalJobContext(cloneContextAndDetachFromParent()));
         if (returnValue.getSucceeded()) {
             startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());
         } else {

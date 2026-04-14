@@ -318,13 +318,19 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         RemoveImageParameters removeImageParams =
                 new RemoveImageParameters(imageId);
         removeImageParams.setStorageDomainId(storageDomainId);
-        removeImageParams.setParentCommand(ActionType.RemoveImage);
         removeImageParams.setDbOperationScope(ImageDbOperationScope.NONE);
         removeImageParams.setShouldLockImage(false);
+        removeImageParams.setParentCommand(getActionType());
+        removeImageParams.setParentParameters(getParameters());
+
+        Map<String, String> values = new HashMap<>();
+        values.put("diskalias", getDiskImage().getDiskAlias());
+        values.put("storagedomain", storageDomainDao.get(storageDomainId).getStorageName());
+
         ActionReturnValue returnValue = runInternalAction(
-                ActionType.RemoveImage,
+                ActionType.RemoveDiskFromDomain,
                 removeImageParams,
-                cloneContextAndDetachFromParent());
+                ExecutionHandler.createInternalJobContext(createStepsContext(StepEnum.DELETE_DISK_FROM_DOMAIN, values)));
         if (returnValue.getSucceeded()) {
             startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());
         } else {
