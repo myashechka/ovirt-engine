@@ -119,6 +119,14 @@ public class RebootVmCommand<T extends RebootVmParameters> extends VmOperationCo
     }
 
     @Override
+    protected boolean isQuotaDependant() {
+        boolean result = super.isQuotaDependant();
+        log.info("VM '{}' RebootVm isQuotaDependant={}, isInternalExecution={}, quotaDependency={}",
+                getVmId(), result, isInternalExecution(), getActionType().getQuotaDependency());
+        return result;
+    }
+
+    @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
         if (!isColdReboot()) {
             return Collections.emptyList();
