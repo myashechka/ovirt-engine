@@ -579,6 +579,12 @@ public class StorageModel extends Model {
 
     private void updateWipeAfterDelete() {
         StorageType storageType = getAvailableStorageTypeItems().getSelectedItem();
+        if (storageType == null || !storageType.isBlockDomain()) {
+            getWipeAfterDelete().setIsAvailable(false);
+            getWipeAfterDelete().setEntity(false);
+            return;
+        }
+        getWipeAfterDelete().setIsAvailable(true);
         if (isNewStorage()) {
             AsyncDataProvider.getInstance().getStorageDomainDefaultWipeAfterDelete(new AsyncQuery<>(
                     returnValue -> getWipeAfterDelete().setEntity(returnValue)), storageType);

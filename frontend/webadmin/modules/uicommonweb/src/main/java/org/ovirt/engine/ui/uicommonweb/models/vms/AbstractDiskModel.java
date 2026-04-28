@@ -661,7 +661,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         getSizeExtend().setIsAvailable((isDiskImage || isManagedBlockDisk) && !getIsNew());
         getStorageDomain().setIsAvailable(isDiskImage || isManagedBlockDisk);
         getVolumeType().setIsAvailable(isDiskImage);
-        getIsWipeAfterDelete().setIsAvailable(isDiskImage);
+        updateWipeAfterDeleteAvailability();
         updatePassDiscardChangeability();
         updateWipeAfterDeleteChangeability();
         getHost().setIsAvailable(isLunDisk);
@@ -946,8 +946,20 @@ public abstract class AbstractDiskModel extends DiskModel {
         updateDiskProfiles(getDataCenter().getSelectedItem());
         updatePassDiscardAvailability();
         updatePassDiscardChangeability();
+        updateWipeAfterDeleteAvailability();
         updateWipeAfterDeleteChangeability();
         updateShareableDiskEnabled();
+    }
+
+    private void updateWipeAfterDeleteAvailability() {
+        boolean isDiskImage = getDiskStorageType().getEntity() == DiskStorageType.IMAGE;
+        StorageDomain selectedStorage = getStorageDomain().getSelectedItem();
+        boolean isBlockDomain = selectedStorage != null && selectedStorage.getStorageType().isBlockDomain();
+        boolean isAvailable = isDiskImage && isBlockDomain;
+        getIsWipeAfterDelete().setIsAvailable(isAvailable);
+        if (!isAvailable) {
+            getIsWipeAfterDelete().setEntity(false);
+        }
     }
 
     public boolean validate() {
