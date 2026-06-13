@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.gluster.GlusterHostValidator;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
+import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.MultipleVmsValidator;
@@ -77,6 +78,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     private final List<PermissionSubject> inspectedEntitiesMap;
     private Map<String, Pair<String, String>> sharedLockMap;
 
+    @Inject
+    private SchedulingManager schedulingManager;
     @Inject
     private GlusterHostValidator glusterHostValidator;
     @Inject
@@ -440,6 +443,10 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 }
             }
 
+            if (result) {
+                result = validateVmsMigrationPossibility(clusters);
+            }
+
             if (result && !getParameters().isForceMaintenance()) {
                 result = validateGlusterParams(clustersAsSet);
             }
@@ -519,6 +526,58 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             }
         }
         return result;
+    }
+
+    /**
+     * Checks that each migratable VM running on hosts being put into maintenance
+     * can actually find a suitable host to migrate to, using the scheduling manager.
+     * This is a fine-grained check that validates resource requirements, policies, etc.
+     */
+    private boolean validateVmsMigrationPossibility(Map<Guid, Cluster> clusters) {
+        List<Guid> maintenanceHostIds = new ArrayList<>(getParameters().getVdsIdList());
+        Map<Guid, List<VM>> migratableVmsByCluster = new HashMap<>();
+
+        for (Guid vdsId : getParameters().getVdsIdList()) {
+            VDS vds = vdssToMaintenance.get(vdsId);
+            if (vds == null) {
+                continue;
+            }
+            List<VM> vms = vmDao.getAllRunningForVds(vdsId);
+            List<VM> migratableVms = vms.stream()
+                    .filter(vm -> !vm.isHostedEngine())
+                    .filter(vm -> vm.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST)
+                    .filter(vm -> !(getParameters().getIsInternal()
+                            && vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE))
+                    .collect(Collectors.toList());
+            if (!migratableVms.isEmpty()) {
+                migratableVmsByCluster.computeIfAbsent(vds.getClusterId(), k -> new ArrayList<>())
+                        .addAll(migratableVms);
+            }
+        }
+
+        List<String> vmsWithNoSuitableHost = new ArrayList<>();
+        for (Map.Entry<Guid, List<VM>> entry : migratableVmsByCluster.entrySet()) {
+            Cluster cluster = clusters.get(entry.getKey());
+            List<VM> clusterVms = entry.getValue();
+
+            Map<Guid, List<VDS>> possibleHosts = schedulingManager.prepareCall(cluster)
+                    .hostBlackList(maintenanceHostIds)
+                    .canSchedule(clusterVms);
+
+            for (VM vm : clusterVms) {
+                if (possibleHosts.getOrDefault(vm.getId(), Collections.emptyList()).isEmpty()) {
+                    vmsWithNoSuitableHost.add(vm.getName());
+                }
+            }
+        }
+
+        if (!vmsWithNoSuitableHost.isEmpty()) {
+            addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VM_HAS_NO_SUITABLE_HOST);
+            getReturnValue().getValidationMessages().add(String.format("$VmsList %1$s",
+                    StringUtils.join(vmsWithNoSuitableHost, ", ")));
+            return false;
+        }
+        return true;
     }
 
     /**
