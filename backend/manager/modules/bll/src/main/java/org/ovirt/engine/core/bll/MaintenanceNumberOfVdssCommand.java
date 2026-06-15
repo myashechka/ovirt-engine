@@ -529,18 +529,9 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     }
 
     /**
-     * Validates that each migratable VM on hosts being put into maintenance has at least
-     * one suitable destination host to migrate to.
-     *
-     * Even if UP hosts exist in the cluster, a specific VM may still be unable to migrate
-     * due to insufficient memory, CPU architecture mismatch, missing required networks,
-     * device passthrough constraints, affinity rules, or other scheduling policies.
-     *
-     * If no suitable host is found for a VM, that VM is considered non-migratable and
-     * putting the current host into maintenance mode is not allowed.
-     *
-     * Uses {@link SchedulingManager#canSchedule} with the maintenance hosts on the blacklist
-     * to simulate the actual scheduling decision.
+     * Checks that every migratable VM has at least one destination host it can actually
+     * migrate to (memory, CPU, networks, affinity, etc.). A VM with no suitable host
+     * blocks the maintenance transition.
      */
     private boolean validateVmsMigrationPossibility(Map<Guid, Cluster> clusters) {
         List<Guid> maintenanceHostIds = new ArrayList<>(getParameters().getVdsIdList());
