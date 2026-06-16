@@ -569,16 +569,15 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             for (VM vm : clusterVms) {
                 if (possibleHosts.getOrDefault(vm.getId(), Collections.emptyList()).isEmpty()) {
                     vmsWithNoSuitableHost.add(vm.getName());
-                    vmFilteringReasons.add(describeWhyVmCannotMigrate(cluster, vm, maintenanceHostIds));
+                    String reasons = describeWhyVmCannotMigrate(cluster, vm, maintenanceHostIds);
+                    vmFilteringReasons.add(String.format("-%s\n%s", vm.getName(), reasons));
                 }
             }
         }
 
         if (!vmsWithNoSuitableHost.isEmpty()) {
-            String details = String.join(" ; ", vmFilteringReasons);
+            String details = String.join("\n\n", vmFilteringReasons);
             addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VM_HAS_NO_SUITABLE_HOST);
-            getReturnValue().getValidationMessages().add(String.format("$VmsList %1$s",
-                    StringUtils.join(vmsWithNoSuitableHost, ", ")));
             getReturnValue().getValidationMessages().add(String.format("$Details %1$s", details));
             log.warn("Hosts {} cannot be put into maintenance, VM migration filtering details:\n{}",
                     maintenanceHostIds, details);
@@ -600,10 +599,9 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 .outputMessages(rawMessages)
                 .canSchedule(vm);
 
-        String reasons = rawMessages.isEmpty()
+        return rawMessages.isEmpty()
                 ? "no candidate hosts in cluster"
-                : String.join(" | ", backend.getErrorsTranslator().translateErrorText(rawMessages));
-        return String.format("VM '%s': %s", vm.getName(), reasons);
+                : String.join("\n", backend.getErrorsTranslator().translateErrorText(rawMessages));
     }
 
 
