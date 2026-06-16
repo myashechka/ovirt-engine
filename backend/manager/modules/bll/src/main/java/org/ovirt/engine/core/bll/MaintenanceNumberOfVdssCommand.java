@@ -531,7 +531,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     /**
      * Checks that every migratable VM has at least one destination host it can actually
      * migrate to (memory, CPU, networks, affinity, etc.). A VM with no suitable host
-     * blocks the maintenance transition.
+     * blocks the maintenance transition. For each such VM, the per-host filtering reasons
+     * are collected and logged/reported so the user can see exactly why no host qualified.
      */
     private boolean validateVmsMigrationPossibility(Map<Guid, Cluster> clusters) {
         List<Guid> maintenanceHostIds = new ArrayList<>(getParameters().getVdsIdList());
@@ -556,6 +557,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         }
 
         List<String> vmsWithNoSuitableHost = new ArrayList<>();
+        List<String> vmFilteringReasons = new ArrayList<>();
         for (Map.Entry<Guid, List<VM>> entry : migratableVmsByCluster.entrySet()) {
             Cluster cluster = clusters.get(entry.getKey());
             List<VM> clusterVms = entry.getValue();
@@ -567,18 +569,43 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             for (VM vm : clusterVms) {
                 if (possibleHosts.getOrDefault(vm.getId(), Collections.emptyList()).isEmpty()) {
                     vmsWithNoSuitableHost.add(vm.getName());
+                    vmFilteringReasons.add(describeWhyVmCannotMigrate(cluster, vm, maintenanceHostIds));
                 }
             }
         }
 
         if (!vmsWithNoSuitableHost.isEmpty()) {
+            String details = String.join(" ; ", vmFilteringReasons);
             addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VM_HAS_NO_SUITABLE_HOST);
             getReturnValue().getValidationMessages().add(String.format("$VmsList %1$s",
                     StringUtils.join(vmsWithNoSuitableHost, ", ")));
+            getReturnValue().getValidationMessages().add(String.format("$Details %1$s", details));
+            log.warn("Hosts {} cannot be put into maintenance, VM migration filtering details:\n{}",
+                    maintenanceHostIds, details);
             return false;
         }
         return true;
     }
+
+    /**
+     * Re-runs scheduling for a single VM to capture the per-host filtering reasons
+     * (e.g. "Host X rejected by Memory: not enough memory", "Host Y rejected by Network: ...").
+     * Done one VM at a time since {@code outputMessages} is shared across a whole call
+     * and is not otherwise attributable to a specific VM.
+     */
+    private String describeWhyVmCannotMigrate(Cluster cluster, VM vm, List<Guid> maintenanceHostIds) {
+        List<String> rawMessages = new ArrayList<>();
+        schedulingManager.prepareCall(cluster)
+                .hostBlackList(maintenanceHostIds)
+                .outputMessages(rawMessages)
+                .canSchedule(vm);
+
+        String reasons = rawMessages.isEmpty()
+                ? "no candidate hosts in cluster"
+                : String.join(" | ", backend.getErrorsTranslator().translateErrorText(rawMessages));
+        return String.format("VM '%s': %s", vm.getName(), reasons);
+    }
+
 
     /**
      * For VM to host affinity, a VM with positive enforcing affinity cannot be migrated
