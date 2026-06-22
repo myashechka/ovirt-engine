@@ -26,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
@@ -54,6 +55,9 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Mock
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
+    @Mock
+    private ClusterDao clusterDao;
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         Map<String, String> migrationMap = new HashMap<>();
@@ -194,5 +198,35 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
         verify(quotaValidator, times(1)).isValid();
         verify(quotaValidator, times(1)).isDefinedForStoragePool(any());
+    }
+
+    @Test
+    public void testClusterIdIsValid() {
+        // Берём id кластера, который уже выставлен в параметрах команды
+        Guid clusterId = cmd.getParameters().getVmStaticData().getClusterId();
+
+        // Настраиваем clusterDao: при запросе по этому id — вернуть реальный объект кластера.
+        // @InjectMocks подставил наш clusterDao-мок внутрь cmd, поэтому это сработает.
+        when(clusterDao.get(clusterId)).thenReturn(cluster);
+
+        assertTrue(cmd.areParametersLegal(), "Валидация должна пройти: кластер с таким id существует");
+    }
+
+    @Test
+    public void testClusterIdIsInvalid() {
+        // Берём id кластера, который уже выставлен в параметрах команды
+        Guid clusterId = cmd.getParameters().getVmStaticData().getClusterId();
+
+        // clusterDao.get() вернёт null — кластер не найден в БД
+        when(clusterDao.get(clusterId)).thenReturn(null);
+
+        assertFalse(cmd.areParametersLegal(), "Валидация должна провалиться: кластер с таким id не существует");
+
+        // Проверяем что команда установила правильное сообщение об ошибке
+        ValidateTestUtils.assertValidationMessages(
+                "Должно быть сообщение об ошибке: кластер не найден",
+                cmd,
+                EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID
+        );
     }
 }
