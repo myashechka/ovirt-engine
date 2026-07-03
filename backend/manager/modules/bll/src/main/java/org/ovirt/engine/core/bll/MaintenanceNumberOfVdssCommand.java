@@ -579,19 +579,13 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 Cluster cluster = pair.getFirst();
                 VM vm = pair.getSecond();
 
-                // Add VM name header — translated by the frontend per user locale
-                getReturnValue().getValidationMessages()
-                        .add(EngineMessage.VDS_CANNOT_MAINTENANCE_VM_MIGRATION_DETAILS_HEADER.name());
-                getReturnValue().getValidationMessages()
-                        .add(String.format("$VmName %1$s", vm.getName()));
-
-                // Add raw scheduler filter messages — also translated by the frontend
                 List<String> rawMessages = new ArrayList<>();
                 schedulingManager.prepareCall(cluster)
                         .hostBlackList(maintenanceHostIds)
                         .outputMessages(rawMessages)
                         .canSchedule(vm);
-                getReturnValue().getValidationMessages().addAll(rawMessages);
+
+                getReturnValue().getValidationMessages().addAll(scopeSchedulerMessagesToVm(rawMessages, vm));
                 log.warn("VM '{}' cannot be migrated from hosts {}: {}",
                         vm.getName(), maintenanceHostIds,
                         String.join(" | ",
@@ -600,6 +594,47 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             return false;
         }
         return true;
+    }
+
+    /**
+     * Maps each generic scheduler terminal message to a VM-scoped equivalent carrying a
+     * ${vmName} placeholder in its template.
+     */
+    private static final Map<String, EngineMessage> SCHEDULER_MESSAGE_TO_VM_SCOPED = new HashMap<>();
+    static {
+        SCHEDULER_MESSAGE_TO_VM_SCOPED.put(EngineMessage.SCHEDULING_HOST_FILTERED_REASON_WITH_DETAIL.name(),
+                EngineMessage.VDS_CANNOT_MAINTENANCE_VM_FILTERED_REASON_WITH_DETAIL);
+        SCHEDULER_MESSAGE_TO_VM_SCOPED.put(EngineMessage.SCHEDULING_HOST_FILTERED_REASON.name(),
+                EngineMessage.VDS_CANNOT_MAINTENANCE_VM_FILTERED_REASON);
+        SCHEDULER_MESSAGE_TO_VM_SCOPED.put(EngineMessage.SCHEDULING_NO_HOSTS.name(),
+                EngineMessage.VDS_CANNOT_MAINTENANCE_VM_NO_HOSTS);
+        SCHEDULER_MESSAGE_TO_VM_SCOPED.put(EngineMessage.SCHEDULING_ALL_HOSTS_FILTERED_OUT.name(),
+                EngineMessage.VDS_CANNOT_MAINTENANCE_VM_ALL_HOSTS_FILTERED_OUT);
+    }
+
+    /**
+     * The frontend groups all of an action's validation messages by their (shared) description
+     * into a {@code Set}, so two VMs rejected for the identical reason on the identical host
+     * would otherwise translate to the exact same text and one of them would silently vanish.
+     * <p>
+     * To keep the text distinct, every scheduler terminal message (see
+     * {@link #SCHEDULER_MESSAGE_TO_VM_SCOPED}) is swapped for a VM-scoped variant, with its own
+     * {@code $vmName} declaration inserted immediately before it — mirroring how the scheduler
+     * already pairs {@code $hostName}/{@code $filterName}/{@code $detailMessage} 1:1 with each
+     * terminal line, so a VM with several filtered hosts still resolves correctly for every line.
+     */
+    private List<String> scopeSchedulerMessagesToVm(List<String> rawMessages, VM vm) {
+        List<String> scoped = new ArrayList<>(rawMessages.size() + 4);
+        for (String message : rawMessages) {
+            EngineMessage vmScopedMessage = SCHEDULER_MESSAGE_TO_VM_SCOPED.get(message);
+            if (vmScopedMessage == null) {
+                scoped.add(message);
+            } else {
+                scoped.add(String.format("$vmName %1$s", vm.getName()));
+                scoped.add(vmScopedMessage.name());
+            }
+        }
+        return scoped;
     }
 
 
