@@ -637,7 +637,6 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         return scoped;
     }
 
-
     /**
      * For VM to host affinity, a VM with positive enforcing affinity cannot be migrated
      * if there is no other host in the affinity group.
