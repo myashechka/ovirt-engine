@@ -234,12 +234,16 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     protected void executeCommand() {
         moveVdssToGoingToMaintenanceMode();
         if (!migrateAllVdss()) {
-            // If VM migration failed (e.g. a VM could not actually be placed once the resource
-            // claims of the other VMs being migrated at the same time were accounted for),
-            // revert the hosts back from PreparingForMaintenance rather than leaving them stuck
-            // there indefinitely — the host would otherwise never reach Maintenance, since that
-            // transition only happens once its VM count reaches zero.
-            activateVdssFromGoingToMaintenanceMode();
+            // If the migrate VMs failed and the command was invoked from UpgradeHost activate the hosts so that they
+            // are not stuck in PreparingForMaintenance status. For every other caller, leave the host(s) in
+            // PreparingForMaintenance: HostMonitoring periodically retries the whole maintenance flow on its own
+            // (see VdsEventListener.handleVdsMaintenanceTimeout / HostPreparingForMaintenanceIdleTime) as long as
+            // the host stays in that status, so once whatever blocked migration is resolved (e.g. capacity freed
+            // up elsewhere) the host will complete the transition to Maintenance automatically — reverting to Up
+            // here would silently break that self-healing retry and require the user to re-trigger manually.
+            if (ActionType.UpgradeHost == getParameters().getParentCommand()) {
+                activateVdssFromGoingToMaintenanceMode();
+            }
             setSucceeded(false);
             return;
         }
