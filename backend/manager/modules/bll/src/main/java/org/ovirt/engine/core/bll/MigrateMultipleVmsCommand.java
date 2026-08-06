@@ -144,7 +144,24 @@ public class MigrateMultipleVmsCommand<T extends MigrateMultipleVmsParameters> e
 
         for (VM vm : possibleVmsToMigrate) {
             Guid hostId = assignment.get(vm.getId());
-            if (hostId == null || hostId.equals(vm.getRunOnVds())) {
+            if (hostId == null) {
+                // The VM had at least one theoretically possible host during validate(), but
+                // schedule() — which, unlike canSchedule(), actually reserves each VM's resources
+                // as it assigns hosts — could not fit it in once the other VMs migrating in this
+                // same batch had claimed their share (e.g. combined memory demand exceeds what
+                // the remaining hosts can provide). This must be a hard failure: silently leaving
+                // the VM behind would let the caller (e.g. host maintenance) report success while
+                // the VM never actually migrated.
+                log.warn("VM '{}' could not be scheduled on any host once concurrent resource " +
+                        "claims of the other migrating VMs were accounted for.", vm.getName());
+                getReturnValue().getValidationMessages()
+                        .add(EngineMessage.ACTION_TYPE_FAILED_VM_COULD_NOT_BE_SCHEDULED.name());
+                getReturnValue().getValidationMessages()
+                        .add(String.format("$VmName %1$s", vm.getName()));
+                setSucceeded(false);
+                continue;
+            }
+            if (hostId.equals(vm.getRunOnVds())) {
                 continue;
             }
 
