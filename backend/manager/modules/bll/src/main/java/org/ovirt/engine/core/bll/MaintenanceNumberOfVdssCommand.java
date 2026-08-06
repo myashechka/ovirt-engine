@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.comparators.VmsComparer;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -534,10 +535,13 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     }
 
     /**
-     * Checks that every migratable VM has at least one destination host it can actually
-     * migrate to (memory, CPU, networks, affinity, etc.). A VM with no suitable host
-     * blocks the maintenance transition. For each such VM, the per-host filtering reasons
-     * are collected and logged/reported so the user can see exactly why no host qualified.
+     * Checks that every migratable VM has an actual host it can migrate to, once the combined
+     * resource demand of ALL VMs being migrated together is accounted for. A VM with no
+     * suitable host blocks the maintenance transition, instead of letting the transition start
+     * and get stuck (a VM can look individually placeable via canSchedule() on a host that
+     * doesn't actually have room once another migrating VM's resource claim is factored in).
+     * For each such VM, the reason(s) are collected and logged/reported so the user can see
+     * exactly why no host qualified.
      */
     private boolean validateVmsMigrationPossibility(Map<Guid, Cluster> clusters) {
         List<Guid> maintenanceHostIds = new ArrayList<>(getParameters().getVdsIdList());
@@ -561,18 +565,30 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             }
         }
 
-        // Collect VMs that have no suitable destination host
+        // Determine which VMs have no actual host to migrate to, using schedule() rather than
+        // canSchedule(): schedule() reserves each VM's resources on its chosen host as it goes,
+        // so it correctly accounts for the combined demand of all VMs being migrated together.
+        // canSchedule() checks every VM in isolation and would wrongly approve two VMs for the
+        // same host even if that host only has room for one of them.
         List<Pair<Cluster, VM>> unmigratableVms = new ArrayList<>();
         for (Map.Entry<Guid, List<VM>> entry : migratableVmsByCluster.entrySet()) {
             Cluster cluster = clusters.get(entry.getKey());
-            List<VM> clusterVms = entry.getValue();
+            List<VM> clusterVms = new ArrayList<>(entry.getValue());
+            // Mirror the priority order MigrateMultipleVmsCommand uses for the real migration,
+            // so this dry run's placement decisions line up with what execution will do.
+            clusterVms.sort(new VmsComparer().reversed());
 
-            Map<Guid, List<VDS>> possibleHosts = schedulingManager.prepareCall(cluster)
+            Map<Guid, Guid> assignment = schedulingManager.prepareCall(cluster)
                     .hostBlackList(maintenanceHostIds)
-                    .canSchedule(clusterVms);
+                    .schedule(clusterVms);
+
+            // This call was only a feasibility probe, not a real migration: release the
+            // pending resource claims schedule() registered for its hypothetical placement,
+            // since none of these VMs are actually being migrated by this validation.
+            clusterVms.forEach(vm -> schedulingManager.clearPendingVm(vm.getStaticData()));
 
             for (VM vm : clusterVms) {
-                if (possibleHosts.getOrDefault(vm.getId(), Collections.emptyList()).isEmpty()) {
+                if (!assignment.containsKey(vm.getId())) {
                     unmigratableVms.add(new Pair<>(cluster, vm));
                 }
             }
@@ -584,17 +600,32 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 Cluster cluster = pair.getFirst();
                 VM vm = pair.getSecond();
 
+                // Get the per-host filter rejection reasons for this VM checked in isolation,
+                // for diagnostics. This can legitimately come back empty: a VM can fail purely
+                // because of the combined demand of the OTHER VMs being migrated at the same
+                // time, in which case no single filter rejects it when checked alone.
                 List<String> rawMessages = new ArrayList<>();
                 schedulingManager.prepareCall(cluster)
                         .hostBlackList(maintenanceHostIds)
                         .outputMessages(rawMessages)
                         .canSchedule(vm);
 
-                getReturnValue().getValidationMessages().addAll(scopeSchedulerMessagesToVm(rawMessages, vm));
+                if (rawMessages.isEmpty()) {
+                    getReturnValue().getValidationMessages()
+                            .add(String.format("$vmName %1$s", vm.getName()));
+                    getReturnValue().getValidationMessages()
+                            .add(EngineMessage.VDS_CANNOT_MAINTENANCE_VM_INSUFFICIENT_COMBINED_RESOURCES.name());
+                } else {
+                    getReturnValue().getValidationMessages().addAll(scopeSchedulerMessagesToVm(rawMessages, vm));
+                }
+
                 log.warn("VM '{}' cannot be migrated from hosts {}: {}",
                         vm.getName(), maintenanceHostIds,
-                        String.join(" | ",
-                                backend.getErrorsTranslator().translateErrorText(rawMessages)));
+                        rawMessages.isEmpty()
+                                ? "no single host filter rejected it in isolation; it only fails once the "
+                                        + "combined resource demand of the other migrating VMs is accounted for"
+                                : String.join(" | ",
+                                        backend.getErrorsTranslator().translateErrorText(rawMessages)));
             }
             return false;
         }
