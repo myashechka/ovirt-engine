@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.TextBoxChanger;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
@@ -108,6 +109,14 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     public FlowPanel roleSelectionPanel;
 
     @UiField
+    public FlowPanel inheritedSelectionPanel;
+
+    @UiField(provided = true)
+    @Path("inherited.entity")
+    @WithElementId("inherited")
+    public EntityModelCheckBoxEditor inheritedSelection;
+
+    @UiField
     @Ignore
     Label errorMessage;
 
@@ -125,6 +134,8 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     public AbstractPermissionsPopupView(EventBus eventBus) {
         super(eventBus);
         initListBoxEditors();
+        inheritedSelection = new EntityModelCheckBoxEditor();
+        inheritedSelection.setLabel(constants.inheritedPermissionCheckBox());
         searchItems = new EntityModelCellTable<>(true);
         searchItems.enableColumnResizing();
         searchItems.setHeight(SEARCH_GRID_HEIGHT);
@@ -296,6 +307,11 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     @Override
     public void hideRoleSelection(boolean indic) {
         roleSelectionPanel.setVisible(!indic);
+    }
+
+    @Override
+    public void hideInheritedSelection(boolean indic) {
+        inheritedSelectionPanel.setVisible(!indic);
     }
 
     @Override

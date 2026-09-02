@@ -9,7 +9,8 @@ CREATE OR REPLACE FUNCTION InsertPermission (
     v_id UUID,
     v_role_id UUID,
     v_object_id UUID,
-    v_object_type_id INT
+    v_object_type_id INT,
+    v_inherited BOOLEAN DEFAULT FALSE
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -18,14 +19,16 @@ BEGIN
         id,
         role_id,
         object_id,
-        object_type_id
+        object_type_id,
+        inherited
         )
     VALUES (
         v_ad_element_id,
         v_id,
         v_role_id,
         v_object_id,
-        v_object_type_id
+        v_object_type_id,
+        v_inherited
         );
 END;$FUNCTION$
 LANGUAGE plpgsql;

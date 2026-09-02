@@ -637,6 +637,10 @@ public interface CommonApplicationConstants extends Constants {
 
     String inheritedFromPermission();
 
+    String inheritedPermissionColumn();
+
+    String inheritedPermissionCheckBox();
+
     String typePermission();
 
     String userPermission();

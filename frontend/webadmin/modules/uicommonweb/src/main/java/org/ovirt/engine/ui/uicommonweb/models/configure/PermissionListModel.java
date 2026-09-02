@@ -129,6 +129,9 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         model.setHelpTag(HelpTag.add_permission_to_user);
         model.setHashName("add_permission_to_user"); //$NON-NLS-1$
 
+        // the "inherited" checkbox is only relevant when adding a permission on a VM
+        model.getIsInheritedCheckboxHidden().setEntity(!(getEntity() instanceof VM));
+
         model.addCommandOperatingOnSelectedItems(UICommand.createDefaultOkUiCommand("OnAdd", this)); //$NON-NLS-1$
         model.addCancelCommand(this);
     }
@@ -210,9 +213,13 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         Role role = model.getRole().getSelectedItem();
         // adGroup/user
 
+        // the "inherited" flag is only applicable to permissions on VMs
+        boolean inherited = getEntity() instanceof VM && Boolean.TRUE.equals(model.getInherited().getEntity());
+
         ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (DbUser user : items) {
             Permission perm = new Permission(user.getId(), role.getId(), getEntityGuid(), getObjectType());
+            perm.setInherited(inherited);
             if (user.isGroup()) {
                 DbGroup group = new DbGroup();
                 group.setId(user.getId());

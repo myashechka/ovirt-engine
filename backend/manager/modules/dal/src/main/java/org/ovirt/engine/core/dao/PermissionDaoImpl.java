@@ -251,7 +251,8 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
                 .addValue("role_id", permission.getRoleId())
                 .addValue("object_id", permission.getObjectId())
                 .addValue("object_type_id",
-                        permission.getObjectType().getValue());
+                        permission.getObjectType().getValue())
+                .addValue("inherited", permission.isInherited());
 
         getCallsHandler().executeModification("InsertPermission", parameterSource);
     }
@@ -296,6 +297,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
         entity.setAuthz(rs.getString("authz"));
         entity.setRoleType(RoleType.getById(rs.getInt("role_type")));
         entity.setCreationDate(rs.getLong("creation_date"));
+        entity.setInherited(rs.getBoolean("inherited"));
 
         return entity;
     };

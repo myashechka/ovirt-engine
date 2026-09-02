@@ -149,6 +149,27 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         isMyGroupsSelectionHidden = value;
     }
 
+    // Whether the "inherited" checkbox should be shown; currently only relevant when adding a permission on a VM.
+    private EntityModel<Boolean> isInheritedCheckboxHidden;
+
+    public EntityModel<Boolean> getIsInheritedCheckboxHidden() {
+        return isInheritedCheckboxHidden;
+    }
+
+    private void setIsInheritedCheckboxHidden(EntityModel<Boolean> value) {
+        isInheritedCheckboxHidden = value;
+    }
+
+    private EntityModel<Boolean> inherited;
+
+    public EntityModel<Boolean> getInherited() {
+        return inherited;
+    }
+
+    private void setInherited(EntityModel<Boolean> value) {
+        inherited = value;
+    }
+
     private boolean isRoleListHidden;
 
     public boolean getIsRoleListHidden() {
@@ -199,6 +220,12 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
         setIsMyGroupsSelectionHidden(new EntityModel<>());
         getIsMyGroupsSelectionHidden().setEntity(false);
+
+        setIsInheritedCheckboxHidden(new EntityModel<>());
+        getIsInheritedCheckboxHidden().setEntity(true);
+
+        setInherited(new EntityModel<>());
+        getInherited().setEntity(false);
 
         setSearchInProgress(new EntityModel<>());
         getSearchInProgress().setEntity(false);

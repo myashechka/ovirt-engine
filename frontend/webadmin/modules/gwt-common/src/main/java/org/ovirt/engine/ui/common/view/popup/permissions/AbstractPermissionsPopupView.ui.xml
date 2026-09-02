@@ -3,6 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
     xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
@@ -80,6 +81,11 @@
                     <b:Column size="SM_3">
                         <g:FlowPanel ui:field="roleSelectionPanel">
                             <e:ListModelListBoxEditor ui:field="roleSelection" label="{constants.roleToAssignPermissionsPopup}" usePatternFly="true" />
+                        </g:FlowPanel>
+                    </b:Column>
+                    <b:Column size="SM_3">
+                        <g:FlowPanel ui:field="inheritedSelectionPanel">
+                            <ge:EntityModelCheckBoxEditor ui:field="inheritedSelection" label="{constants.inheritedPermissionCheckBox}" usePatternFly="true" />
                         </g:FlowPanel>
                     </b:Column>
                 </b:Row>

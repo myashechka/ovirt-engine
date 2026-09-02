@@ -97,6 +97,11 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             return false;
         }
 
+        // the "inherited" flag is only meaningful for permissions on VMs
+        if (perm.getObjectType() != VdcObjectType.VM) {
+            perm.setInherited(false);
+        }
+
         // if user and group not sent check user/group is in the db in order to
         // give permission
         if (getParameters().getUser() == null

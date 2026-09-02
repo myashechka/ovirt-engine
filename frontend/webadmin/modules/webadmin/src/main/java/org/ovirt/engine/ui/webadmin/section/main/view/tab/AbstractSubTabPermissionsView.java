@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
 import org.ovirt.engine.ui.common.widget.action.PermissionActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionWithInheritedPermissionListModelTable;
+import org.ovirt.engine.ui.common.widget.uicommon.permissions.VmPermissionListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionFilter;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -30,8 +31,16 @@ public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetails
     public AbstractSubTabPermissionsView(
             SearchableDetailModelProvider<Permission, M, T> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, PermissionActionPanelPresenterWidget<I, M, T> actionPanel) {
-        super(new PermissionWithInheritedPermissionListModelTable<>(
-                modelProvider, eventBus, actionPanel, clientStorage));
+        this(modelProvider, eventBus, clientStorage, actionPanel, false);
+    }
+
+    protected AbstractSubTabPermissionsView(
+            SearchableDetailModelProvider<Permission, M, T> modelProvider,
+            EventBus eventBus, ClientStorage clientStorage, PermissionActionPanelPresenterWidget<I, M, T> actionPanel,
+            boolean showInheritedPermissionColumn) {
+        super(showInheritedPermissionColumn
+                ? new VmPermissionListModelTable<>(modelProvider, eventBus, actionPanel, clientStorage)
+                : new PermissionWithInheritedPermissionListModelTable<>(modelProvider, eventBus, actionPanel, clientStorage));
         generateIds();
         initTable();
         getTable().setTableOverhead(createOverheadPanel());

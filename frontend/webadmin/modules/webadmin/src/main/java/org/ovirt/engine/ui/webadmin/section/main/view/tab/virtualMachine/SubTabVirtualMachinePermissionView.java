@@ -27,7 +27,7 @@ public class SubTabVirtualMachinePermissionView extends AbstractSubTabPermission
             PermissionListModel<VM>> modelProvider, EventBus eventBus,
             PermissionActionPanelPresenterWidget<VM, VmListModel<Void>, PermissionListModel<VM>> actionPanel,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, actionPanel);
+        super(modelProvider, eventBus, clientStorage, actionPanel, true);
     }
 
     @Override

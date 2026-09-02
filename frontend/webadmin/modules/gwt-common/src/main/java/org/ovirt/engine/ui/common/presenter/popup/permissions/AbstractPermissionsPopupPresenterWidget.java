@@ -44,6 +44,8 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
 
         void hideEveryoneSelection(boolean indic);
 
+        void hideInheritedSelection(boolean indic);
+
         void userTypeChanged(UserOrGroup newType, boolean setRadioValue);
 
         void setLoadingState(LoadingState state);
@@ -121,6 +123,11 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
 
         model.getIsEveryoneSelectionHidden().getPropertyChangedEvent().addListener((ev, sender, args) -> getView().hideEveryoneSelection(Boolean.parseBoolean(model.getIsRoleListHiddenModel()
                 .getEntity().toString())));
+
+        getView().hideInheritedSelection(model.getIsInheritedCheckboxHidden().getEntity());
+
+        model.getIsInheritedCheckboxHidden().getPropertyChangedEvent().addListener((ev, sender, args) -> getView().hideInheritedSelection(model.getIsInheritedCheckboxHidden()
+                .getEntity()));
 
         HasHandlers searchStringEditor = getView().getSearchStringEditor();
         if (searchStringEditor instanceof HasFocusHandlers) {

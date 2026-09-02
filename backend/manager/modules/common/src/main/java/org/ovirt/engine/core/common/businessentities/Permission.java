@@ -21,6 +21,8 @@ public class Permission implements Queryable, BusinessEntity<Guid> {
     private String namespace;
     /** timestamp taken when that permission was created, in seconds from EPOCH **/
     private long creationDate;
+    /** marks that this permission is inherited; currently only applicable to VM permissions **/
+    private boolean inherited;
 
     public Permission() {
         this (Guid.Empty, Guid.Empty, null, null);
@@ -145,6 +147,16 @@ public class Permission implements Queryable, BusinessEntity<Guid> {
         this.creationDate = creationDate;
     }
 
+    /**
+     * @return whether this permission is inherited; currently only applicable to VM permissions
+     */
+    public boolean isInherited() {
+        return inherited;
+    }
+
+    public void setInherited(boolean inherited) {
+        this.inherited = inherited;
+    }
 
     @Override
     public int hashCode() {
@@ -159,7 +171,8 @@ public class Permission implements Queryable, BusinessEntity<Guid> {
                 roleId,
                 authz,
                 namespace,
-                creationDate);
+                creationDate,
+                inherited);
     }
 
     @Override

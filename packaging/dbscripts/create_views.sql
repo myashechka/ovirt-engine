@@ -2315,7 +2315,8 @@ SELECT permissions.id AS id,
     (fn_authz_entry_info(permissions.ad_element_id)).name AS owner_name,
     (fn_authz_entry_info(permissions.ad_element_id)).namespace AS namespace,
     (fn_authz_entry_info(permissions.ad_element_id)).authz AS authz,
-    permissions.creation_date AS creation_date
+    permissions.creation_date AS creation_date,
+    permissions.inherited AS inherited
 FROM permissions
 INNER JOIN roles
     ON permissions.role_id = roles.id;
