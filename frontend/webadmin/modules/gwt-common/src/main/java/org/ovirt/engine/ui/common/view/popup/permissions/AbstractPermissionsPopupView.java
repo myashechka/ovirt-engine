@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.popup.permissions.AbstractPermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -134,7 +135,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     public AbstractPermissionsPopupView(EventBus eventBus) {
         super(eventBus);
         initListBoxEditors();
-        inheritedSelection = new EntityModelCheckBoxEditor();
+        inheritedSelection = new EntityModelCheckBoxEditor(Align.RIGHT);
         inheritedSelection.setLabel(constants.inheritedPermissionCheckBox());
         searchItems = new EntityModelCellTable<>(true);
         searchItems.enableColumnResizing();

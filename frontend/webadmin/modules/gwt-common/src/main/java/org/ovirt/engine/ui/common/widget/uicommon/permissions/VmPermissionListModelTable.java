@@ -29,7 +29,7 @@ public class VmPermissionListModelTable<E, P extends PermissionListModel<E>> ext
         super.initTable();
 
         AbstractBooleanColumn<Permission> inheritedColumn =
-                new AbstractBooleanColumn<Permission>(constants.inheritedPermissionColumn()) {
+                new AbstractBooleanColumn<Permission>(constants.yes(), constants.no()) {
                     @Override
                     public Boolean getRawValue(Permission object) {
                         return object.isInherited();
