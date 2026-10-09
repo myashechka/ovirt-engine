@@ -19,12 +19,9 @@ public class GetVmsByClusterIdQuery<P extends GetVmsByClusterIdParameters> exten
 
     @Override
     protected void executeQueryCommand() {
-        List<VM> vms;
-        if (getParameters().isRunningOnly()) {
-            vms = vmDao.getAllRunningForCluster(getParameters().getId(), getUserID(), getParameters().isFiltered());
-        } else {
-            vms = vmDao.getAllForCluster(getParameters().getId(), getUserID(), getParameters().isFiltered());
-        }
+        List<VM> vms = getParameters().isRunningOnly()
+                ? vmDao.getAllRunningForCluster(getParameters().getId())
+                : vmDao.getAllForCluster(getParameters().getId());
         getQueryReturnValue().setReturnValue(vms);
     }
 }

@@ -271,23 +271,11 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
-    public List<VM> getAllForCluster(Guid clusterId, Guid userId, boolean isFiltered) {
-        return getCallsHandler().executeReadList("GetAllVmsByClusterId",
-                vmRowMapper,
-                getCustomMapSqlParameterSource()
-                        .addValue("cluster_id", clusterId)
-                        .addValue("user_id", userId)
-                        .addValue("is_filtered", isFiltered));
-    }
-
-    @Override
-    public List<VM> getAllRunningForCluster(Guid clusterId, Guid userId, boolean isFiltered) {
+    public List<VM> getAllRunningForCluster(Guid clusterId) {
         return getCallsHandler().executeReadList("GetRunningVmsByClusterId",
                 vmRowMapper,
                 getCustomMapSqlParameterSource()
-                        .addValue("cluster_id", clusterId)
-                        .addValue("user_id", userId)
-                        .addValue("is_filtered", isFiltered));
+                        .addValue("cluster_id", clusterId));
     }
 
     @Override
