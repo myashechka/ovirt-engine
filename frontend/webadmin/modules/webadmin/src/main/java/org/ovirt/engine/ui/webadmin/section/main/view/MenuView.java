@@ -198,10 +198,13 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
     }
 
     private void updateBasedonMode(ApplicationMode applicationMode) {
+        // The clusters main page is no longer reachable from the menu in any mode; cluster sub tabs
+        // (general, hosts, vms, etc.) remain reachable via links from other pages.
+        clustersAnchor.setVisible(false);
+        clustersStorageAnchor.setVisible(false);
         switch (applicationMode) {
             case VirtOnly:
             case AllModes:
-                clustersStorageAnchor.setVisible(false);
                 break;
             case GlusterOnly:
                 computeSecondaryHeader.setVisible(false);
@@ -211,7 +214,6 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
                 poolsAnchor.setVisible(false);
                 hostsAnchor.setVisible(false);
                 dataCentersAnchor.setVisible(false);
-                clustersAnchor.setVisible(false);
                 disksAnchor.setVisible(false);
                 providersAnchor.setVisible(false);
                 quotasAnchor.setVisible(false);

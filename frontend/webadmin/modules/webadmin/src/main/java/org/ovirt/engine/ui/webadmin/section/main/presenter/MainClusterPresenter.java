@@ -55,4 +55,17 @@ public class MainClusterPresenter extends AbstractMainWithDetailsPresenter<Clust
         return PlaceRequestFactory.get(WebAdminApplicationPlaces.clusterMainPlace);
     }
 
+    @Override
+    protected void onReveal() {
+        // The clusters list page itself is hidden from navigation; only deep links into cluster
+        // sub tabs (e.g. clusters-general;name=X) should keep working, so redirect away only when
+        // the bare main place was requested directly.
+        PlaceRequest currentPlace = placeManager.getCurrentPlaceRequest();
+        if (WebAdminApplicationPlaces.clusterMainPlace.equals(currentPlace.getNameToken())) {
+            placeManager.revealPlace(PlaceRequestFactory.get(WebAdminApplicationPlaces.dataCenterMainPlace));
+            return;
+        }
+        super.onReveal();
+    }
+
 }
