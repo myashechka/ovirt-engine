@@ -2239,6 +2239,10 @@ public interface UIConstants extends Constants {
 
     String directPermissions();
 
+    String allVms();
+
+    String runningVms();
+
     String cpuPinningDedicatedDescription();
 
     String cpuPinningIsolateThreadsDescription();

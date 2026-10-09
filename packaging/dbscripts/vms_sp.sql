@@ -1941,6 +1941,54 @@ END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetAllVmsByClusterId(
+    v_cluster_id UUID,
+    v_user_id UUID,
+    v_is_filtered BOOLEAN)
+RETURNS SETOF vms STABLE
+   AS $FUNCTION$
+BEGIN
+    IF v_is_filtered THEN
+        RETURN QUERY SELECT DISTINCT vms.*
+            FROM vms
+            INNER JOIN user_vm_permissions_view
+                ON vms.vm_guid = user_vm_permissions_view.entity_id
+            WHERE vms.cluster_id = v_cluster_id
+                AND user_vm_permissions_view.user_id = v_user_id;
+    ELSE
+        RETURN QUERY SELECT vms.*
+            FROM vms
+            WHERE vms.cluster_id = v_cluster_id;
+    END IF;
+END; $FUNCTION$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetRunningVmsByClusterId(
+    v_cluster_id UUID,
+    v_user_id UUID,
+    v_is_filtered BOOLEAN)
+RETURNS SETOF vms STABLE
+   AS $FUNCTION$
+BEGIN
+    IF v_is_filtered THEN
+        RETURN QUERY SELECT DISTINCT vms.*
+            FROM vms
+            INNER JOIN user_vm_permissions_view
+                ON vms.vm_guid = user_vm_permissions_view.entity_id
+            WHERE vms.cluster_id = v_cluster_id
+                AND vms.status <> 0 -- Down
+                AND user_vm_permissions_view.user_id = v_user_id;
+    ELSE
+        RETURN QUERY SELECT vms.*
+            FROM vms
+            WHERE vms.cluster_id = v_cluster_id
+                AND vms.status <> 0; -- Down
+    END IF;
+END; $FUNCTION$
+LANGUAGE plpgsql;
+
+
 
 Create or replace FUNCTION GetVmsByVmPoolId(v_vm_pool_id UUID) RETURNS SETOF vms STABLE
    AS $FUNCTION$

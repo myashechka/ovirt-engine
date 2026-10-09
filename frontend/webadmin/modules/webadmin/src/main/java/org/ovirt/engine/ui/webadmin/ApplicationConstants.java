@@ -1520,6 +1520,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String statusIconVm();
 
+    String vmFilter();
+
     String uptimeVm();
 
     String editVm();

@@ -165,6 +165,7 @@ public enum QueryType implements Serializable {
     GetVdsNumaNodesByVdsId(QueryAuthType.User),
     GetVmNumaNodesByVmId(QueryAuthType.User),
     GetAllVmsWithNumaByClusterId(QueryAuthType.User),
+    GetVmsByClusterId(QueryAuthType.User),
 
     // Cluster
     GetVdsCertificateSubjectByVmId(QueryAuthType.User),

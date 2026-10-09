@@ -287,6 +287,16 @@ public interface VmDao extends Dao {
     List<VM> getAllForCluster(Guid clusterId);
 
     /**
+     * Retrieves all VMs that belong to the provided cluster, respecting the given user's permissions.
+     */
+    List<VM> getAllForCluster(Guid clusterId, Guid userId, boolean isFiltered);
+
+    /**
+     * Retrieves all running VMs that belong to the provided cluster, respecting the given user's permissions.
+     */
+    List<VM> getAllRunningForCluster(Guid clusterId, Guid userId, boolean isFiltered);
+
+    /**
      * Retrieves all VMS that belong to the provided vm pool
      * @param vmPoolId
      *             the pool id

@@ -2,9 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetVmsByClusterIdParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelSettingsManager;
 import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -28,6 +27,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class ClusterVmListModel extends VmListModel<Cluster> {
+
+    private boolean runningOnly;
 
     @Inject
     public ClusterVmListModel(final VmGeneralModel vmGeneralModel,
@@ -65,16 +66,35 @@ public class ClusterVmListModel extends VmListModel<Cluster> {
     @Override
     public void search() {
         if (getEntity() != null) {
-            setSearchString("Vms: cluster=" + getEntity().getName()); //$NON-NLS-1$
             super.search();
+        }
+    }
+
+    public void setRunningOnly(boolean runningOnly) {
+        // prevent query if value is not changed since the query is refreshed on timer interval
+        if (this.runningOnly != runningOnly) {
+            this.runningOnly = runningOnly;
+            syncSearch();
         }
     }
 
     @Override
     protected void syncSearch() {
-        SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VM);
+        if (getEntity() == null) {
+            return;
+        }
+
+        GetVmsByClusterIdParameters tempVar = new GetVmsByClusterIdParameters(getEntity().getId());
+        tempVar.setRunningOnly(runningOnly);
         tempVar.setRefresh(getIsQueryFirstTime());
-        super.syncSearch(QueryType.Search, tempVar);
+        super.syncSearch(QueryType.GetVmsByClusterId, tempVar);
+    }
+
+    @Override
+    public boolean supportsServerSideSorting() {
+        // This model fetches VMs via a dedicated DAO query, not via the generic search engine,
+        // so sorting is done on the client using column comparators.
+        return false;
     }
 
     @Override
