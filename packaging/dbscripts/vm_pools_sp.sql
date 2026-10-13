@@ -15,7 +15,8 @@ CREATE OR REPLACE FUNCTION InsertVm_pools (
     v_cluster_id UUID,
     v_max_assigned_vms_per_user SMALLINT,
     v_spice_proxy VARCHAR(255),
-    v_is_auto_storage_select BOOLEAN
+    v_is_auto_storage_select BOOLEAN,
+    v_group_id UUID
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -31,7 +32,8 @@ BEGIN
         cluster_id,
         max_assigned_vms_per_user,
         spice_proxy,
-        is_auto_storage_select
+        is_auto_storage_select,
+        group_id
         )
     VALUES (
         v_vm_pool_id,
@@ -45,7 +47,8 @@ BEGIN
         v_cluster_id,
         v_max_assigned_vms_per_user,
         v_spice_proxy,
-        v_is_auto_storage_select
+        v_is_auto_storage_select,
+        v_group_id
         );
 END;$FUNCTION$
 LANGUAGE plpgsql;
@@ -62,7 +65,8 @@ CREATE OR REPLACE FUNCTION UpdateVm_pools (
     v_cluster_id UUID,
     v_max_assigned_vms_per_user SMALLINT,
     v_spice_proxy VARCHAR(255),
-    v_is_auto_storage_select BOOLEAN
+    v_is_auto_storage_select BOOLEAN,
+    v_group_id UUID
     )
 RETURNS VOID
     --The [vm_pools] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -79,7 +83,8 @@ BEGIN
         cluster_id = v_cluster_id,
         max_assigned_vms_per_user = v_max_assigned_vms_per_user,
         spice_proxy = v_spice_proxy,
-        is_auto_storage_select = v_is_auto_storage_select
+        is_auto_storage_select = v_is_auto_storage_select,
+        group_id = v_group_id
     WHERE vm_pool_id = v_vm_pool_id;
 END;$FUNCTION$
 LANGUAGE plpgsql;
@@ -137,7 +142,8 @@ DROP TYPE IF EXISTS GetAllFromVm_pools_rs CASCADE;
         max_assigned_vms_per_user SMALLINT,
         spice_proxy VARCHAR(255),
         is_being_destroyed BOOLEAN,
-        is_auto_storage_select BOOLEAN
+        is_auto_storage_select BOOLEAN,
+        group_id UUID
         );
 
 CREATE OR REPLACE FUNCTION GetAllFromVm_pools ()
@@ -237,7 +243,8 @@ BEGIN
             max_assigned_vms_per_user SMALLINT,
             spice_proxy VARCHAR(255),
             is_being_destroyed BOOLEAN,
-            is_auto_storage_select BOOLEAN
+            is_auto_storage_select BOOLEAN,
+            group_id UUID
             ) ON COMMIT DROP;
 
         exception when others then
@@ -261,7 +268,8 @@ BEGIN
         max_assigned_vms_per_user,
         spice_proxy,
         is_being_destroyed,
-        is_auto_storage_select
+        is_auto_storage_select,
+        group_id
         )
     SELECT ppr.vm_pool_id,
         ppr.assigned_vm_count,
@@ -278,7 +286,8 @@ BEGIN
         p.max_assigned_vms_per_user,
         p.spice_proxy,
         p.is_being_destroyed,
-        p.is_auto_storage_select
+        p.is_auto_storage_select,
+        p.group_id
     FROM tt_VM_POOL_PRERESULT ppr
     INNER JOIN vm_pools_view p
         ON ppr.vm_pool_id = p.vm_pool_id;
@@ -409,6 +418,22 @@ BEGIN
     INNER JOIN user_vm_pool_permissions_view
         ON user_id = v_user_id
             AND entity_id = pools.vm_pool_id;
+END;$FUNCTION$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION UpdateGroupForVmsInPool (
+    v_vm_pool_id UUID,
+    v_group_id UUID
+    )
+RETURNS VOID AS $FUNCTION$
+BEGIN
+    UPDATE vm_static
+    SET group_id = v_group_id
+    WHERE vm_guid IN (
+        SELECT vm_guid
+        FROM vm_pool_map
+        WHERE vm_pool_id = v_vm_pool_id
+        );
 END;$FUNCTION$
 LANGUAGE plpgsql;
 

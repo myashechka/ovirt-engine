@@ -150,6 +150,24 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         initializeBiosType();
     }
 
+    /**
+     * Loads the full list of groups and selects the one matching {@code groupId}, if any.
+     * Unlike Quota, the group list has no cluster scoping, so the full list always contains
+     * the currently assigned group (if it still exists).
+     */
+    protected void selectGroup(Guid groupId) {
+        AsyncDataProvider.getInstance().getGroupList(asyncQuery(groups -> {
+            groups.add(0, null);
+            getModel().getGroup().setItems(groups);
+            if (groupId != null) {
+                groups.stream()
+                        .filter(g -> g != null && g.getId().equals(groupId))
+                        .findFirst()
+                        .ifPresent(g -> getModel().getGroup().setSelectedItem(g));
+            }
+        }));
+    }
+
     protected void initializeBiosType() {
         getModel().getBiosType().setItems(AsyncDataProvider.getInstance().getBiosTypeList());
     }

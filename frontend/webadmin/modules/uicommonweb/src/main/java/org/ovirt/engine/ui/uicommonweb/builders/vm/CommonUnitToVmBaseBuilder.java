@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
+import org.ovirt.engine.core.common.businessentities.Group;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.ui.uicommonweb.builders.CompositeSyncBuilder;
@@ -33,5 +34,9 @@ public class CommonUnitToVmBaseBuilder<T extends VmBase> extends CompositeSyncBu
         vm.setPriority(model.getPriority().getSelectedItem().getEntity());
         StorageDomain leaseSd = model.getLease().getSelectedItem();
         vm.setLeaseStorageDomainId(leaseSd != null ? leaseSd.getId() : null);
+        // For a VM that belongs to a pool, the group field is locked and its selected item
+        // always reflects the VM's current group, so this round-trips unchanged in that case.
+        Group group = model.getGroup().getSelectedItem();
+        vm.setGroupId(group != null ? group.getId() : null);
     }
 }

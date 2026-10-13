@@ -151,4 +151,14 @@ public interface VmStaticDao extends GenericDao<VmStatic, Guid> {
      * Get all VmStatic with the given ids
      */
     List<VmStatic> getByIds(List<Guid> ids);
+
+    /**
+     * Updates vm_static.group_id for every VM currently in the given pool. Used to cascade
+     * a group change made on the pool to all of its VMs; bypasses the regular VM update flow,
+     * since a VM's group cannot be changed directly once it belongs to a pool.
+     *
+     * @param vmPoolId the pool whose VMs should be updated
+     * @param groupId the new group id (may be {@code null})
+     */
+    void updateGroupForVmsInPool(Guid vmPoolId, Guid groupId);
 }

@@ -68,6 +68,12 @@ public class VmPool implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     private boolean beingDestroyed;
     private boolean autoSelectStorage;
 
+    /**
+     * The group assigned to this pool. Assigned to every VM created for the pool;
+     * changing it here cascades to every VM already in the pool.
+     */
+    private Guid groupId;
+
     public VmPool() {
         parameters = "";
         defaultStartTime = new TimeSpan();
@@ -92,7 +98,8 @@ public class VmPool implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 type,
                 stateful,
                 maxAssignedVmsPerUser,
-                spiceProxy
+                spiceProxy,
+                groupId
         );
     }
 
@@ -116,7 +123,8 @@ public class VmPool implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(type, other.type)
                 && Objects.equals(stateful, other.stateful)
                 && maxAssignedVmsPerUser == other.maxAssignedVmsPerUser
-                && Objects.equals(spiceProxy, other.spiceProxy);
+                && Objects.equals(spiceProxy, other.spiceProxy)
+                && Objects.equals(groupId, other.groupId);
     }
 
     @Override
@@ -285,6 +293,14 @@ public class VmPool implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     public void setAutoStorageSelect(boolean autoSelect) {
         this.autoSelectStorage = autoSelect;
+    }
+
+    public Guid getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Guid groupId) {
+        this.groupId = groupId;
     }
 
     @Override

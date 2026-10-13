@@ -104,7 +104,8 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("cpu_pinning", StringUtils.isEmpty(entity.getCpuPinning()) ? null : entity.getCpuPinning())
                 .addValue("virtio_scsi_multi_queues", entity.getVirtioScsiMultiQueues())
                 .addValue("balloon_enabled", entity.isBalloonEnabled())
-                .addValue("cpu_pinning_policy", entity.getCpuPinningPolicy());
+                .addValue("cpu_pinning_policy", entity.getCpuPinningPolicy())
+                .addValue("group_id", entity.getGroupId());
     }
 
     /**
@@ -189,6 +190,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setVirtioScsiMultiQueues(rs.getInt("virtio_scsi_multi_queues"));
             entity.setBalloonEnabled(rs.getBoolean("balloon_enabled"));
             entity.setCpuPinningPolicy(CpuPinningPolicy.forValue(rs.getInt("cpu_pinning_policy")));
+            entity.setGroupId(getGuid(rs, "group_id"));
         }
     }
 

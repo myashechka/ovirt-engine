@@ -927,6 +927,7 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.num_of_monitors AS num_of_monitors,
     vm_templates.allow_console_reconnect AS allow_console_reconnect,
     vm_templates.template_status AS status,
+    vm_templates.group_id AS group_id,
     vm_templates.usb_policy AS usb_policy,
     vm_templates.time_zone AS time_zone,
     cluster.name AS cluster_name,
@@ -1323,6 +1324,7 @@ SELECT vm_static.vm_name AS vm_name,
     vm_static.is_smartcard_enabled AS is_smartcard_enabled,
     vm_static.is_delete_protected AS is_delete_protected,
     vm_static.sso_method AS sso_method,
+    vm_static.group_id AS group_id,
     fn_get_dedicated_hosts_ids_by_vm_id(vm_static.vm_guid) AS dedicated_vm_for_vds,
     vm_static.default_boot_sequence AS default_boot_sequence,
     vm_static.vm_type AS vm_type,
@@ -2251,7 +2253,8 @@ SELECT vm_pools.vm_pool_id,
     vm_pools.max_assigned_vms_per_user AS max_assigned_vms_per_user,
     vm_pools.spice_proxy AS spice_proxy,
     vm_pools.is_being_destroyed AS is_being_destroyed,
-    vm_pools.is_auto_storage_select AS is_auto_storage_select
+    vm_pools.is_auto_storage_select AS is_auto_storage_select,
+    vm_pools.group_id AS group_id
 FROM vm_pools
 INNER JOIN cluster
     ON vm_pools.cluster_id = cluster.cluster_id
@@ -2297,7 +2300,8 @@ SELECT vmp.vm_pool_id,
     vmp.storage_pool_name,
     vmp.storage_pool_id,
     vmp.is_being_destroyed,
-    vmp.is_auto_storage_select
+    vmp.is_auto_storage_select,
+    vmp.group_id
 FROM vm_pools_view vmp;
 
 CREATE OR REPLACE VIEW permissions_view AS

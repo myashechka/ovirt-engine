@@ -380,6 +380,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         return vmStatic.isStateless();
     }
 
+    public Guid getGroupId() {
+        return vmStatic.getGroupId();
+    }
+
+    public void setGroupId(Guid value) {
+        vmStatic.setGroupId(value);
+    }
+
     public boolean isSmartcardEnabled() {
         return vmStatic.isSmartcardEnabled();
     }

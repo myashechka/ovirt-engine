@@ -286,6 +286,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         VmStatic currVm = new VmStatic(getParameters().getVmStaticData());
         currVm.setName(vmName);
         currVm.setStateless(!getVmPool().isStateful());
+        currVm.setGroupId(getVmPool().getGroupId());
 
         if (getParameters().getVmLargeIcon() != null) {
             final VmIconIdSizePair iconIds = iconUtils.ensureIconPairInDatabase(getParameters().getVmLargeIcon());

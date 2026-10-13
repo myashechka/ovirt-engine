@@ -1403,6 +1403,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     return failValidation(EngineMessage.ACTION_TYPE_CANNOT_CHANGE_INITIAL_RUN_DATA);
                 }
             }
+
+            // The group of a VM that belongs to a pool is managed through the pool only.
+            if (!Objects.equals(getParameters().getVmStaticData().getGroupId(), vmFromDB.getGroupId())) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CHANGE_GROUP_FOR_VM_IN_POOL);
+            }
         }
 
         if (!validate(validateAffinityGroups())) {

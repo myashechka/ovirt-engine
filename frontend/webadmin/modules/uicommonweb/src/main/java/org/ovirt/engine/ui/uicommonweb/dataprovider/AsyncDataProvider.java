@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.Group;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Nameable;
@@ -884,6 +885,11 @@ public class AsyncDataProvider {
     public void getLabelList(AsyncQuery<List<Label>> aQuery) {
         aQuery.converterCallback = new SortListByNameConverter<>();
         Frontend.getInstance().runQuery(QueryType.GetAllLabels, new QueryParametersBase(), aQuery);
+    }
+
+    public void getGroupList(AsyncQuery<List<Group>> aQuery) {
+        aQuery.converterCallback = new SortListByNameConverter<>();
+        Frontend.getInstance().runQuery(QueryType.GetAllGroups, new QueryParametersBase(), aQuery);
     }
 
     public void getEntitiesNameMap(AsyncQuery<Map<Guid, String>> aQuery) {

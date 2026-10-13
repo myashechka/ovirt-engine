@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.Group;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -415,6 +416,9 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
         if (model.getSpiceProxyEnabled().getEntity()) {
             pool.setSpiceProxy(model.getSpiceProxy().getEntity());
         }
+
+        Group group = model.getGroup().getSelectedItem();
+        pool.setGroupId(group != null ? group.getId() : null);
 
         VM vm = buildVmOnSave(model);
         vm.setVmInit(model.getVmInitModel().buildCloudInitParameters(model));

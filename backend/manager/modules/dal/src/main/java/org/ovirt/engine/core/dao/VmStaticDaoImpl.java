@@ -206,6 +206,14 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
                 getCustomMapSqlParameterSource().addValue("vm_guids", createArrayOfUUIDs(ids)));
     }
 
+    @Override
+    public void updateGroupForVmsInPool(Guid vmPoolId, Guid groupId) {
+        getCallsHandler().executeModification("UpdateGroupForVmsInPool",
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_pool_id", vmPoolId)
+                        .addValue("group_id", groupId));
+    }
+
     /**
      * JDBC row mapper for VM static
      */

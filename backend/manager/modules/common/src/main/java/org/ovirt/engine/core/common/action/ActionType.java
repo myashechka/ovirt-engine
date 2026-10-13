@@ -651,6 +651,9 @@ public enum ActionType {
     AddLabel(6100, ActionGroup.TAG_MANAGEMENT, false, QuotaDependency.NONE),
     RemoveLabel(6101, ActionGroup.TAG_MANAGEMENT, false, QuotaDependency.NONE),
     UpdateLabel(6102, ActionGroup.TAG_MANAGEMENT, false, QuotaDependency.NONE),
+    AddGroup(6103, ActionGroup.TAG_MANAGEMENT, false, QuotaDependency.NONE),
+    UpdateGroup(6104, ActionGroup.TAG_MANAGEMENT, false, QuotaDependency.NONE),
+    RemoveGroup(6105, ActionGroup.TAG_MANAGEMENT, false, QuotaDependency.NONE),
 
     // Scheduling and balancing
     BalanceVm(6200, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),

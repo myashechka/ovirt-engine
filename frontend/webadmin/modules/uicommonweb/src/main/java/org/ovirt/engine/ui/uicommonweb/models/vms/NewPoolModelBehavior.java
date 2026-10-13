@@ -27,6 +27,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
 
         getModel().getVmType().setIsChangeable(true);
         getModel().getPoolStateful().setIsChangeable(true);
+        selectGroup(null);
 
         templateValidate();
 

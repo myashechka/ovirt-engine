@@ -85,7 +85,8 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_balloon_enabled BOOLEAN,
  v_console_disconnect_action_delay INTEGER,
  v_cpu_pinning_policy SMALLINT,
- v_parallel_migrations SMALLINT)
+ v_parallel_migrations SMALLINT,
+ v_group_id UUID)
 
 RETURNS VOID
    AS $FUNCTION$
@@ -263,7 +264,8 @@ BEGIN
         v_balloon_enabled,
         v_console_disconnect_action_delay,
         v_cpu_pinning_policy,
-        v_parallel_migrations);
+        v_parallel_migrations,
+        v_group_id);
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vmt_guid;
     INSERT INTO vm_ovf_generations(
@@ -364,7 +366,8 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_balloon_enabled BOOLEAN,
  v_console_disconnect_action_delay INTEGER,
  v_cpu_pinning_policy SMALLINT,
- v_parallel_migrations SMALLINT)
+ v_parallel_migrations SMALLINT,
+ v_group_id UUID)
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -446,7 +449,8 @@ BEGIN
       balloon_enabled = v_balloon_enabled,
       console_disconnect_action_delay = v_console_disconnect_action_delay,
       cpu_pinning_policy = v_cpu_pinning_policy,
-      parallel_migrations = v_parallel_migrations
+      parallel_migrations = v_parallel_migrations,
+      group_id = v_group_id
       WHERE vm_guid = v_vmt_guid
           AND entity_type = v_template_type;
 

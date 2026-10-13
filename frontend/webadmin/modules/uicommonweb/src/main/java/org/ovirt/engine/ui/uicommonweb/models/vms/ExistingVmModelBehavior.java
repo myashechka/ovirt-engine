@@ -82,6 +82,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
         getModel().getIsStateless().setIsAvailable(vm.getVmPoolId() == null);
         getModel().getIsRunAndPause().setIsAvailable(vm.getVmPoolId() == null);
+        selectGroup(vm.getGroupId());
 
         // Storage domain and provisioning are not available for an existing VM.
         getModel().getStorageDomain().setIsChangeable(false);

@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.Group;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -164,6 +165,21 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
     public void setSpiceProxyEnabled(EntityModel<Boolean> spiceProxyEnabled) {
         this.spiceProxyEnabled = spiceProxyEnabled;
+    }
+
+    private NotChangableForVmInPoolListModel<Group> group;
+
+    /**
+     * The group assigned to this VM/pool. Always changeable for a pool, and for a
+     * standalone VM; locked by {@link #setVmAttachedToPool} for a VM that belongs
+     * to a pool, since its group can then only be changed via the pool.
+     */
+    public ListModel<Group> getGroup() {
+        return group;
+    }
+
+    public void setGroup(NotChangableForVmInPoolListModel<Group> group) {
+        this.group = group;
     }
 
     private EntityModel<Boolean> editingEnabled;
@@ -396,6 +412,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             // ==Custom Properties Tab==
             getCustomProperties().setIsChangeable(false);
             getCustomPropertySheet().setIsChangeable(false);
+
+            getGroup().setIsChangeable(false);
 
             // ==Icon Tab==
             getIcon().setIsChangeable(false);
@@ -1801,6 +1819,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
         setSpiceProxyEnabled(new EntityModel<>(false));
         setSpiceProxy(new EntityModel<>());
+
+        setGroup(new NotChangableForVmInPoolListModel<>());
 
         setIsSubTemplate(new NotChangableForVmInPoolEntityModel<>(false));
         getIsSubTemplate().getEntityChangedEvent().addListener(this);

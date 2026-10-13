@@ -237,6 +237,14 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @EditableVmTemplateField
     private boolean stateless;
 
+    /**
+     * The group this VM belongs to. Editable for a standalone VM; for a VM that
+     * belongs to a pool this is set from the pool and cannot be changed directly
+     * on the VM (see {@code UpdateVmCommand}).
+     */
+    @EditableVmField
+    private Guid groupId;
+
     @CopyOnNewVersion
     @EditableVmField
     private boolean deleteProtected;
@@ -1056,6 +1064,14 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         stateless = value;
     }
 
+    public Guid getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Guid value) {
+        groupId = value;
+    }
+
     public String getIsoPath() {
         return isoPath;
     }
@@ -1200,6 +1216,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 origin,
                 priority,
                 stateless,
+                groupId,
                 smartcardEnabled,
                 timeZone,
                 usbPolicy,
@@ -1274,6 +1291,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && origin == other.origin
                 && priority == other.priority
                 && stateless == other.stateless
+                && Objects.equals(groupId, other.groupId)
                 && smartcardEnabled == other.smartcardEnabled
                 && deleteProtected == other.deleteProtected
                 && Objects.equals(timeZone, other.timeZone)

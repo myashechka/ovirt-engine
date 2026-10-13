@@ -744,7 +744,8 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_balloon_enabled BOOLEAN,
     v_console_disconnect_action_delay INTEGER,
     v_cpu_pinning_policy SMALLINT,
-    v_parallel_migrations SMALLINT)
+    v_parallel_migrations SMALLINT,
+    v_group_id UUID)
   RETURNS VOID
    AS $FUNCTION$
 DECLARE
@@ -832,7 +833,8 @@ INSERT INTO vm_static(description,
                       balloon_enabled,
                       console_disconnect_action_delay,
                       cpu_pinning_policy,
-                      parallel_migrations)
+                      parallel_migrations,
+                      group_id)
     VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
@@ -912,7 +914,8 @@ INSERT INTO vm_static(description,
            v_balloon_enabled,
            v_console_disconnect_action_delay,
            v_cpu_pinning_policy,
-           v_parallel_migrations);
+           v_parallel_migrations,
+           v_group_id);
 
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE
@@ -1119,7 +1122,8 @@ v_namespace VARCHAR(253),
 v_balloon_enabled BOOLEAN,
 v_console_disconnect_action_delay INTEGER,
 v_cpu_pinning_policy SMALLINT,
-v_parallel_migrations SMALLINT)
+v_parallel_migrations SMALLINT,
+v_group_id UUID)
 
 RETURNS VOID
 
@@ -1206,7 +1210,8 @@ BEGIN
      balloon_enabled = v_balloon_enabled,
      console_disconnect_action_delay = v_console_disconnect_action_delay,
      cpu_pinning_policy = v_cpu_pinning_policy,
-     parallel_migrations = v_parallel_migrations
+     parallel_migrations = v_parallel_migrations,
+     group_id = v_group_id
      WHERE vm_guid = v_vm_guid
          AND entity_type = 'VM';
 

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -40,6 +42,8 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
     private VmPoolDao vmPoolDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     private VmPool oldPool;
 
@@ -136,6 +140,14 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
             // if a change in template version was detected --> update all pool vms
             updatePoolVms(poolVmsBeforeAdd);
         }
+
+        if (getSucceeded() && !Objects.equals(oldPool.getGroupId(), getVmPool().getGroupId())) {
+            // cascade the pool's group to every VM in the pool. Done directly via the DAO
+            // (rather than ActionType.UpdateVm) since a VM's group cannot be changed through
+            // the regular VM update flow once it belongs to a pool.
+            vmStaticDao.updateGroupForVmsInPool(getVmPool().getVmPoolId(), getVmPool().getGroupId());
+        }
+
         vmPoolMonitor.triggerPoolMonitoringJob();
     }
 

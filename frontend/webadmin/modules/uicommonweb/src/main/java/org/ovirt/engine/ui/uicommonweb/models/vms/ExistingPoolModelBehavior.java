@@ -47,6 +47,8 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
             getModel().getSpiceProxy().setIsChangeable(true);
         }
 
+        selectGroup(actualPool.getGroupId());
+
         instanceTypeManager = new ExistingPoolInstanceTypeManager(getModel(), pool);
         instanceTypeManager.setAlwaysEnabledFieldUpdate(true);
         getModel().getCustomProperties().setIsChangeable(false);

@@ -48,6 +48,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         getModel().getVmId().setIsAvailable(true);
         getModel().getAffinityGroupList().setIsAvailable(true);
         getModel().getLabelList().setIsAvailable(true);
+        selectGroup(null);
 
         loadDataCenters();
 

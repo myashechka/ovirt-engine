@@ -90,7 +90,8 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                 .addValue("max_assigned_vms_per_user", pool.getMaxAssignedVmsPerUser())
                 .addValue("spice_proxy", pool.getSpiceProxy())
                 .addValue("is_being_destroyed", pool.isBeingDestroyed())
-                .addValue("is_auto_storage_select", pool.isAutoStorageSelect());
+                .addValue("is_auto_storage_select", pool.isAutoStorageSelect())
+                .addValue("group_id", pool.getGroupId());
 
         getCallsHandler().executeModification("InsertVm_pools", parameterSource);
     }
@@ -110,7 +111,8 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                 .addValue("max_assigned_vms_per_user", pool.getMaxAssignedVmsPerUser())
                 .addValue("spice_proxy", pool.getSpiceProxy())
                 .addValue("is_being_destroyed", pool.isBeingDestroyed())
-                .addValue("is_auto_storage_select", pool.isAutoStorageSelect());
+                .addValue("is_auto_storage_select", pool.isAutoStorageSelect())
+                .addValue("group_id", pool.getGroupId());
 
         getCallsHandler().executeModification("UpdateVm_pools", parameterSource);
     }
@@ -182,6 +184,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
         entity.setSpiceProxy(rs.getString("spice_proxy"));
         entity.setBeingDestroyed(rs.getBoolean("is_being_destroyed"));
         entity.setAutoStorageSelect(rs.getBoolean("is_auto_storage_select"));
+        entity.setGroupId(getGuid(rs, "group_id"));
         return entity;
     };
 
@@ -201,6 +204,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
         entity.setSpiceProxy(rs.getString("spice_proxy"));
         entity.setBeingDestroyed(rs.getBoolean("is_being_destroyed"));
         entity.setAutoStorageSelect(rs.getBoolean("is_auto_storage_select"));
+        entity.setGroupId(getGuid(rs, "group_id"));
         return entity;
     };
 
