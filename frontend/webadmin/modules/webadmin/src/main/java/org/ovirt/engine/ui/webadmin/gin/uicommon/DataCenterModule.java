@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -31,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkListM
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkQoSListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterVmPoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetworkQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
@@ -471,6 +473,7 @@ public class DataCenterModule extends AbstractGinModule {
     protected void configure() {
         bind(DataCenterListModel.class).in(Singleton.class);
         bind(DataCenterClusterListModel.class).in(Singleton.class);
+        bind(DataCenterVmPoolListModel.class).in(Singleton.class);
         bind(DataCenterNetworkListModel.class).in(Singleton.class);
         bind(DataCenterStorageListModel.class).in(Singleton.class);
         bind(DataCenterQuotaListModel.class).in(Singleton.class);
@@ -486,6 +489,9 @@ public class DataCenterModule extends AbstractGinModule {
         // Search-able Detail Models
         bind(new TypeLiteral<SearchableDetailModelProvider<Cluster, DataCenterListModel, DataCenterClusterListModel>>() { })
             .to(new TypeLiteral<SearchableDetailTabModelProvider<Cluster, DataCenterListModel, DataCenterClusterListModel>>() { })
+            .in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<VmPool, DataCenterListModel, DataCenterVmPoolListModel>>() { })
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VmPool, DataCenterListModel, DataCenterVmPoolListModel>>() { })
             .in(Singleton.class);
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, DataCenterListModel, PermissionListModel<StoragePool>>>() { })

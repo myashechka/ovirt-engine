@@ -36,6 +36,7 @@ public final class WebAdminApplicationPlaces {
     public static final String dataCenterIscsiBondSubTabPlace = dataCenterMainPlace + SUB_TAB_PREFIX + "iscsi_bond"; //$NON-NLS-1$
     public static final String dataCenterNetworkSubTabPlace = dataCenterMainPlace + SUB_TAB_PREFIX + "logical_networks"; //$NON-NLS-1$
     public static final String dataCenterClusterSubTabPlace = dataCenterMainPlace + SUB_TAB_PREFIX + "clusters"; //$NON-NLS-1$
+    public static final String dataCenterVmPoolSubTabPlace = dataCenterMainPlace + SUB_TAB_PREFIX + "vm_pools"; //$NON-NLS-1$
     public static final String dataCenterQuotaSubTabPlace = dataCenterMainPlace + SUB_TAB_PREFIX + "quota"; //$NON-NLS-1$
     public static final String dataCenterPermissionSubTabPlace = dataCenterMainPlace + SUB_TAB_PREFIX + "permissions"; //$NON-NLS-1$
     public static final String dataCenterEventSubTabPlace = dataCenterMainPlace + SUB_TAB_PREFIX + "events"; //$NON-NLS-1$

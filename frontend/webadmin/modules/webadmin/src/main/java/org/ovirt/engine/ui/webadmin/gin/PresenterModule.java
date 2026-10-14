@@ -276,6 +276,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTab
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterQosPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStoragePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterVmPoolPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.DiskSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskPermissionPresenter;
@@ -564,6 +565,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataC
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterQosView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterQuotaView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterStorageView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterVmPoolView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.DiskSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskPermissionView;
@@ -830,6 +832,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabDataCenterClusterPresenter.ViewDef.class,
                 SubTabDataCenterClusterView.class,
                 SubTabDataCenterClusterPresenter.ProxyDef.class);
+        bindPresenter(SubTabDataCenterVmPoolPresenter.class,
+                SubTabDataCenterVmPoolPresenter.ViewDef.class,
+                SubTabDataCenterVmPoolView.class,
+                SubTabDataCenterVmPoolPresenter.ProxyDef.class);
         bindPresenter(SubTabDataCenterQuotaPresenter.class,
                 SubTabDataCenterQuotaPresenter.ViewDef.class,
                 SubTabDataCenterQuotaView.class,

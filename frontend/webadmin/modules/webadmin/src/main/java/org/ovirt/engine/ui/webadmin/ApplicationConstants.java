@@ -174,6 +174,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String dataCenterClusterSubTabLabel();
 
+    String dataCenterVmPoolSubTabLabel();
+
     String dataCenterQuotaSubTabLabel();
 
     String dataCenterNetworkQoSSubTabLabel();
@@ -1581,6 +1583,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String typePool();
 
     String descriptionPool();
+
+    String clusterPool();
 
     String newPool();
 

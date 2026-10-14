@@ -45,6 +45,8 @@ public final class DetailTabDataIndex {
 
     public static final TabData DATACENTER_CLUSTERS = new GroupedTabData(constants.dataCenterClusterSubTabLabel(), 3); //$NON-NLS-1$
 
+    public static final TabData DATACENTER_VM_POOLS = new GroupedTabData(constants.dataCenterVmPoolSubTabLabel(), 3); //$NON-NLS-1$
+
     public static final TabData DATACENTER_QOS = new GroupedTabData(constants.dataCenterQosSubTabLabel(), 4); //$NON-NLS-1$
 
     public static final TabData DATACENTER_QUOTA = new GroupedTabData(constants.dataCenterQuotaSubTabLabel(), 4); //$NON-NLS-1$
