@@ -51,6 +51,17 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetGroupByName (v_group_name VARCHAR(255))
+RETURNS SETOF groups STABLE AS $FUNCTION$
+BEGIN
+    RETURN QUERY
+
+    SELECT groups.*
+    FROM groups
+    WHERE group_name = v_group_name;
+END;$FUNCTION$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetAllGroups ()
 RETURNS SETOF groups STABLE AS $FUNCTION$
 BEGIN

@@ -31,6 +31,15 @@ public class GroupDaoImpl extends BaseDao implements GroupDao {
     }
 
     @Override
+    public Group getByName(String name) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("group_name", name);
+
+        return getCallsHandler()
+                .executeRead("GetGroupByName", groupRowMapper, parameterSource);
+    }
+
+    @Override
     public List<Group> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 

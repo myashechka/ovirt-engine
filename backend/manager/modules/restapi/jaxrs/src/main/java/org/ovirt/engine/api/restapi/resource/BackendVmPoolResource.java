@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.AttachUserToVmFromPoolAndRunParameters;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
+import org.ovirt.engine.core.common.businessentities.Group;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -101,6 +103,11 @@ public class BackendVmPoolResource
                 org.ovirt.engine.core.common.businessentities.VmPool current) {
             final int currentVmCount = current.getAssignedVmsCount();
 
+            if (namedVmGroup(incoming)) {
+                Group group = lookupVmGroupByName(incoming.getVmGroup().getName());
+                incoming.getVmGroup().setId(group.getId().toString());
+            }
+
             int size = 0;
             if (incoming.isSetSize()) {
                 // in case the value is negative, the backend command will fail on validate
@@ -152,6 +159,17 @@ public class BackendVmPoolResource
     private void setupSealing(AddVmPoolParameters params) {
         Boolean seal = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, SEAL, Boolean.TRUE, null);
         params.setSeal(seal);
+    }
+
+    private boolean namedVmGroup(VmPool pool) {
+        return pool.isSetVmGroup() && pool.getVmGroup().isSetName() && !pool.getVmGroup().isSetId();
+    }
+
+    private Group lookupVmGroupByName(String name) {
+        return getEntity(Group.class,
+                QueryType.GetGroupByName,
+                new NameQueryParameters(name),
+                "VmGroup: name=" + name);
     }
 
     private Guid getTempalteId(Template template) {

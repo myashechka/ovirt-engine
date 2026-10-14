@@ -534,6 +534,7 @@ public enum QueryType implements Serializable {
     // Groups
     GetAllGroups,
     GetGroupById,
+    GetGroupByName,
     GetLabelById,
     GetLabelByEntityId,
     GetEntitiesNameMap,

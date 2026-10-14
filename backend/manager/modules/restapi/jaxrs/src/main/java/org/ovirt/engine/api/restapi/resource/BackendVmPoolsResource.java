@@ -21,6 +21,7 @@ import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.Group;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -103,6 +104,11 @@ public class BackendVmPoolsResource
 
         Cluster cluster = getCluster(pool);
         pool.getCluster().setId(cluster.getId().toString());
+
+        if (namedVmGroup(pool)) {
+            Group group = getVmGroup(pool);
+            pool.getVmGroup().setId(group.getId().toString());
+        }
 
         VmTemplate template = getVmTemplate(pool);
         if (namedTemplate(pool)) {
@@ -249,6 +255,17 @@ public class BackendVmPoolsResource
                     new IdQueryParameters(asGuid(pool.getCluster().getId())),
                     "Cluster: id=" + pool.getCluster().getId());
         }
+    }
+
+    protected boolean namedVmGroup(VmPool pool) {
+        return pool.isSetVmGroup() && pool.getVmGroup().isSetName() && !pool.getVmGroup().isSetId();
+    }
+
+    protected Group getVmGroup(VmPool pool) {
+        return getEntity(Group.class,
+                QueryType.GetGroupByName,
+                new NameQueryParameters(pool.getVmGroup().getName()),
+                "VmGroup: name=" + pool.getVmGroup().getName());
     }
 
     protected boolean namedTemplate(VmPool pool) {

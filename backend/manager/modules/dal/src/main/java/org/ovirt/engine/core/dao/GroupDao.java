@@ -21,6 +21,11 @@ public interface GroupDao extends Dao {
     List<Group> getAll();
 
     /**
+     * Retrieves the group with the specified name.
+     */
+    Group getByName(String name);
+
+    /**
      * Saves the supplied group.
      */
     void save(Group group);
