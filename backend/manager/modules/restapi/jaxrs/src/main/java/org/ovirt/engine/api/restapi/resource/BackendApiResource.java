@@ -63,6 +63,7 @@ import org.ovirt.engine.api.resource.SystemPermissionsResource;
 import org.ovirt.engine.api.resource.SystemResource;
 import org.ovirt.engine.api.resource.TagsResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
+import org.ovirt.engine.api.resource.VmGroupsResource;
 import org.ovirt.engine.api.resource.VmPoolsResource;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.resource.VnicProfilesResource;
@@ -670,6 +671,11 @@ public class BackendApiResource
     @Override
     public UsersResource getUsersResource() {
         return inject(new BackendUsersResource());
+    }
+
+    @Override
+    public VmGroupsResource getVmGroupsResource() {
+        return inject(new BackendVmGroupsResource());
     }
 
     @Override

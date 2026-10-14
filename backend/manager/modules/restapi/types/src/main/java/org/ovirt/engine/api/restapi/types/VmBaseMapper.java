@@ -37,6 +37,7 @@ import org.ovirt.engine.api.model.VcpuPins;
 import org.ovirt.engine.api.model.VmAffinity;
 import org.ovirt.engine.api.model.VmBase;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
+import org.ovirt.engine.api.model.VmGroup;
 import org.ovirt.engine.api.model.VmStorageErrorResumeBehaviour;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
@@ -289,6 +290,10 @@ public class VmBaseMapper {
             }
         }
 
+        if (model.isSetVmGroup()) {
+            entity.setGroupId(model.getVmGroup().isSetId() ? GuidUtils.asGuid(model.getVmGroup().getId()) : null);
+        }
+
         if (model.isSetLease()) {
             entity.setLeaseStorageDomainId(StorageDomainLeaseMapper.map(model.getLease()));
         }
@@ -488,6 +493,12 @@ public class VmBaseMapper {
             Quota quota = new Quota();
             quota.setId(entity.getQuotaId().toString());
             model.setQuota(quota);
+        }
+
+        if (entity.getGroupId() != null) {
+            VmGroup vmGroup = new VmGroup();
+            vmGroup.setId(entity.getGroupId().toString());
+            model.setVmGroup(vmGroup);
         }
 
         model.setLease(StorageDomainLeaseMapper.map(entity.getLeaseStorageDomainId()));

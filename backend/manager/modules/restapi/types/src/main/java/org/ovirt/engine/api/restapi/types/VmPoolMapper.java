@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Display;
+import org.ovirt.engine.api.model.VmGroup;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmPoolType;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
@@ -55,6 +56,9 @@ public class VmPoolMapper {
         }
         if (model.isSetAutoStorageSelect()) {
             entity.setAutoStorageSelect(model.isAutoStorageSelect());
+        }
+        if (model.isSetVmGroup()) {
+            entity.setGroupId(model.getVmGroup().isSetId() ? GuidUtils.asGuid(model.getVmGroup().getId()) : null);
         }
         return entity;
     }
@@ -111,6 +115,11 @@ public class VmPoolMapper {
         model.setType(map(entity.getVmPoolType(), null));
         model.setStateful(entity.isStateful());
         model.setAutoStorageSelect(entity.isAutoStorageSelect());
+        if (entity.getGroupId() != null) {
+            VmGroup vmGroup = new VmGroup();
+            vmGroup.setId(entity.getGroupId().toString());
+            model.setVmGroup(vmGroup);
+        }
 
         return model;
     }
