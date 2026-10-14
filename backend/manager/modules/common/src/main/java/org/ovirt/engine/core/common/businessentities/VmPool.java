@@ -303,6 +303,16 @@ public class VmPool implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.groupId = groupId;
     }
 
+    private String groupName;
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
     @Override
     public String toString() {
         return "VmPool [" + getName() + "]";

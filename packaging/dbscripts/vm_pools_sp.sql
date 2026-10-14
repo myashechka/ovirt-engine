@@ -143,7 +143,8 @@ DROP TYPE IF EXISTS GetAllFromVm_pools_rs CASCADE;
         spice_proxy VARCHAR(255),
         is_being_destroyed BOOLEAN,
         is_auto_storage_select BOOLEAN,
-        group_id UUID
+        group_id UUID,
+        group_name VARCHAR(255)
         );
 
 CREATE OR REPLACE FUNCTION GetAllFromVm_pools ()
@@ -244,7 +245,8 @@ BEGIN
             spice_proxy VARCHAR(255),
             is_being_destroyed BOOLEAN,
             is_auto_storage_select BOOLEAN,
-            group_id UUID
+            group_id UUID,
+            group_name VARCHAR(255)
             ) ON COMMIT DROP;
 
         exception when others then
@@ -269,7 +271,8 @@ BEGIN
         spice_proxy,
         is_being_destroyed,
         is_auto_storage_select,
-        group_id
+        group_id,
+        group_name
         )
     SELECT ppr.vm_pool_id,
         ppr.assigned_vm_count,
@@ -287,7 +290,8 @@ BEGIN
         p.spice_proxy,
         p.is_being_destroyed,
         p.is_auto_storage_select,
-        p.group_id
+        p.group_id,
+        p.group_name
     FROM tt_VM_POOL_PRERESULT ppr
     INNER JOIN vm_pools_view p
         ON ppr.vm_pool_id = p.vm_pool_id;

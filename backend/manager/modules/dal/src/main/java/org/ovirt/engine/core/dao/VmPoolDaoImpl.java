@@ -185,6 +185,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
         entity.setBeingDestroyed(rs.getBoolean("is_being_destroyed"));
         entity.setAutoStorageSelect(rs.getBoolean("is_auto_storage_select"));
         entity.setGroupId(getGuid(rs, "group_id"));
+        entity.setGroupName(rs.getString("group_name"));
         return entity;
     };
 
@@ -205,6 +206,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
         entity.setBeingDestroyed(rs.getBoolean("is_being_destroyed"));
         entity.setAutoStorageSelect(rs.getBoolean("is_auto_storage_select"));
         entity.setGroupId(getGuid(rs, "group_id"));
+        entity.setGroupName(rs.getString("group_name"));
         return entity;
     };
 

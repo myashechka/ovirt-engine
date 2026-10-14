@@ -2254,12 +2254,15 @@ SELECT vm_pools.vm_pool_id,
     vm_pools.spice_proxy AS spice_proxy,
     vm_pools.is_being_destroyed AS is_being_destroyed,
     vm_pools.is_auto_storage_select AS is_auto_storage_select,
-    vm_pools.group_id AS group_id
+    vm_pools.group_id AS group_id,
+    groups.group_name AS group_name
 FROM vm_pools
 INNER JOIN cluster
     ON vm_pools.cluster_id = cluster.cluster_id
 LEFT JOIN storage_pool
-    ON storage_pool.id = cluster.storage_pool_id;
+    ON storage_pool.id = cluster.storage_pool_id
+LEFT JOIN groups
+    ON groups.group_id = vm_pools.group_id;
 
 CREATE OR REPLACE VIEW vm_pools_full_view AS
 
@@ -2301,7 +2304,8 @@ SELECT vmp.vm_pool_id,
     vmp.storage_pool_id,
     vmp.is_being_destroyed,
     vmp.is_auto_storage_select,
-    vmp.group_id
+    vmp.group_id,
+    vmp.group_name
 FROM vm_pools_view vmp;
 
 CREATE OR REPLACE VIEW permissions_view AS

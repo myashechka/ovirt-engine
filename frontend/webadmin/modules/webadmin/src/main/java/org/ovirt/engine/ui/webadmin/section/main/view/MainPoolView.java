@@ -121,6 +121,14 @@ public class MainPoolView extends AbstractMainWithDetailsTableView<VmPool, PoolL
         };
         descColumn.makeSortable(PoolConditionFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descColumn, constants.descriptionPool(), "300px"); //$NON-NLS-1$
+
+        AbstractTextColumn<VmPool> groupColumn = new AbstractTextColumn<VmPool>() {
+            @Override
+            public String getValue(VmPool object) {
+                return object.getGroupName();
+            }
+        };
+        getTable().addColumn(groupColumn, constants.groupLabel(), "150px"); //$NON-NLS-1$
     }
 
 }
