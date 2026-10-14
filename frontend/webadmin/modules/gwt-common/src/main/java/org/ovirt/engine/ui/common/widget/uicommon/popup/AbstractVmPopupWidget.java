@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.Group;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
@@ -195,6 +196,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "comment.entity")
     @WithElementId("comment")
     public StringEntityModelTextBoxEditor commentEditor;
+
+    @UiField(provided = true)
+    @Path(value = "group.selectedItem")
+    @WithElementId("group")
+    public ListModelListBoxEditor<Group> groupEditor;
 
     @UiField(provided = true)
     @Path(value = "baseTemplate.selectedItem")
@@ -1660,6 +1666,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         cdImageEditor.hideLabel();
 
         cpuProfilesEditor = new ListModelListBoxEditor<>(new NameRenderer<CpuProfile>());
+        groupEditor = new ListModelListBoxEditor<>(new NameRenderer<Group>());
 
         cpuSharesAmountSelectionEditor =
                 new ListModelListBoxOnlyEditor<>(new EnumRenderer<UnitVmModel.CpuSharesAmount>(), new ModeSwitchingVisibilityRenderer());
@@ -2167,6 +2174,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // ==Resource Allocation Tab==
         nextTabIndex = resourceAllocationTab.setTabIndexes(nextTabIndex);
         cpuProfilesEditor.setTabIndex(nextTabIndex++);
+        groupEditor.setTabIndex(nextTabIndex++);
         provisioningThinEditor.setTabIndex(nextTabIndex++);
         provisioningCloneEditor.setTabIndex(nextTabIndex++);
         cpuPinningPolicyEditor.setTabIndex(nextTabIndex++);

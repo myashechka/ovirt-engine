@@ -135,6 +135,9 @@
                         <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" label="{constants.commentLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                       </b:Row>
                       <b:Row>
+                        <e:ListModelListBoxEditor ui:field="groupEditor" label="{constants.groupLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                      </b:Row>
+                      <b:Row>
                         <ge:StringEntityModelTextBoxEditor ui:field="vmIdEditor" label="{constants.vmIdPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                       </b:Row>
                       <!-- New VM Pool -->

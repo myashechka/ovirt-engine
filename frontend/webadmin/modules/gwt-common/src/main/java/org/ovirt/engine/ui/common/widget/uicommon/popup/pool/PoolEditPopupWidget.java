@@ -52,6 +52,7 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
     private void enableEditPoolFields(UnitVmModel model) {
         descriptionEditor.setEnabled(true);
         commentEditor.setEnabled(true);
+        groupEditor.setEnabled(true);
         prestartedVmsEditor.setEnabled(true);
 
         editPrestartedVmsEditor.setEnabled(true);

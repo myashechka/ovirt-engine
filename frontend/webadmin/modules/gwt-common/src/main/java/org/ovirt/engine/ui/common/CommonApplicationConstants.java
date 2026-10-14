@@ -1613,6 +1613,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String cpuProfileLabel();
 
+    String groupLabel();
+
     String numaUnassignedInstructions();
 
     String unassignedVNumaNodesLabel();
