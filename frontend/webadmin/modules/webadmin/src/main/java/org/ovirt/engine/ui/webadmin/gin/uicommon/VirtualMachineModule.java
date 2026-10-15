@@ -513,6 +513,20 @@ public class VirtualMachineModule extends AbstractGinModule {
         return result;
     }
 
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<VM, VmListModel<Void>, VmDataCenterListModel> getVmDataCenterListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<VmListModel<Void>> mainModelProvider,
+            final Provider<VmDataCenterListModel> modelProvider) {
+
+        SearchableDetailTabModelProvider<VM, VmListModel<Void>, VmDataCenterListModel> result =
+                new SearchableDetailTabModelProvider<>(eventBus, defaultConfirmPopupProvider);
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+
+        return result;
+    }
 
     @Override
     protected void configure() {
@@ -549,9 +563,6 @@ public class VirtualMachineModule extends AbstractGinModule {
             .in(Singleton.class);
         bind(new TypeLiteral<SearchableDetailModelProvider<GuestContainer, VmListModel<Void>, VmGuestContainerListModel>>() { })
                 .to(new TypeLiteral<SearchableDetailTabModelProvider<GuestContainer, VmListModel<Void>, VmGuestContainerListModel>>() { })
-                .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<VM, VmListModel<Void>, VmDataCenterListModel>>() { })
-                .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, VmListModel<Void>, VmDataCenterListModel>>() { })
                 .in(Singleton.class);
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, VmListModel<Void>, PermissionListModel<VM>>>() { })
