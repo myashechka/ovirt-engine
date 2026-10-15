@@ -7,48 +7,36 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelSettingsManager;
-import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
-import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
-import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 /**
  * Lists the VMs that belong to the same Data Center as the currently selected VM
  * (this model's {@code entity}), excluding the selected VM itself.
+ *
+ * This is a standalone {@link SearchableListModel} (not a {@link VmListModel} subclass):
+ * since it is wired as a detail model of the main VM list (itself a {@code VmListModel<Void>}),
+ * extending the same generic {@code VmListModel<E>} template here would make GIN's static
+ * injector generation see this model as depending on its own class hierarchy, which it
+ * reports as a circular dependency. A plain {@code SearchableListModel<VM, VM>} avoids that,
+ * at the cost of not supporting the VM grid's context-menu commands (Run/Stop/...) here.
  */
-public class VmDataCenterListModel extends VmListModel<VM> {
+public class VmDataCenterListModel extends SearchableListModel<VM, VM> {
 
     @Inject
-    public VmDataCenterListModel(final VmGeneralModel vmGeneralModel,
-            final VmInterfaceListModel vmInterfaceListModel,
-            final VmDiskListModel vmDiskListModel,
-            final VmSnapshotListModel vmSnapshotListModel,
-            final VmEventListModel vmEventListModel,
-            final VmAppListModel<VM> vmAppListModel,
-            final PermissionListModel<VM> permissionListModel,
-            final VmAffinityGroupListModel vmAffinityGroupListModel,
-            final VmGuestInfoModel vmGuestInfoModel,
-            final Provider<ImportVmsModel> importVmsModelProvider,
-            final VmHostDeviceListModel vmHostDeviceListModel,
-            final VmDevicesListModel<VM> vmDevicesListModel,
-            final VmAffinityLabelListModel vmAffinityLabelListModel,
-            final VmErrataCountModel vmErrataCountModel,
-            final VmGuestContainerListModel vmGuestContainerListModel,
-            final ConfirmationModelSettingsManager confirmationModelSettingsManager) {
-        super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel,
-                vmSnapshotListModel, vmEventListModel, vmAppListModel,
-                permissionListModel, vmAffinityGroupListModel, vmGuestInfoModel,
-                importVmsModelProvider, vmHostDeviceListModel, vmDevicesListModel,
-                vmAffinityLabelListModel, vmErrataCountModel, vmGuestContainerListModel,
-                confirmationModelSettingsManager);
-        getSearchNextPageCommand().setIsAvailable(false);
-        getSearchPreviousPageCommand().setIsAvailable(false);
+    public VmDataCenterListModel() {
+        setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
+        setHelpTag(HelpTag.virtual_machines);
+        setHashName("datacenter_vms"); //$NON-NLS-1$
+    }
+
+    @Override
+    protected String getListName() {
+        return "VmDataCenterListModel"; //$NON-NLS-1$
     }
 
     @Override
