@@ -445,6 +445,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String virtualMachineErrataSubTabLabel();
 
+    String virtualMachineDataCenterVmSubTabLabel();
+
     String hostGeneralSubTabLabel();
 
     String hostGeneralInfoSubTabLabel();

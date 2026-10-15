@@ -36,6 +36,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExternalProviderMo
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDeviceFeEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
@@ -527,6 +528,7 @@ public class VirtualMachineModule extends AbstractGinModule {
         bind(new TypeLiteral<VmAppListModel<VM>>() { }).in(Singleton.class);
         bind(VmGuestContainerListModel.class).in(Singleton.class);
         bind(VmHostDeviceListModel.class).in(Singleton.class);
+        bind(VmDataCenterListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VM>>() { }).in(Singleton.class);
         bind(new TypeLiteral<VmDevicesListModel<VM>>() { }).in(Singleton.class);
         bind(VmErrataCountModel.class).in(Singleton.class);
@@ -547,6 +549,9 @@ public class VirtualMachineModule extends AbstractGinModule {
             .in(Singleton.class);
         bind(new TypeLiteral<SearchableDetailModelProvider<GuestContainer, VmListModel<Void>, VmGuestContainerListModel>>() { })
                 .to(new TypeLiteral<SearchableDetailTabModelProvider<GuestContainer, VmListModel<Void>, VmGuestContainerListModel>>() { })
+                .in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<VM, VmListModel<Void>, VmDataCenterListModel>>() { })
+                .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, VmListModel<Void>, VmDataCenterListModel>>() { })
                 .in(Singleton.class);
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, VmListModel<Void>, PermissionListModel<VM>>>() { })

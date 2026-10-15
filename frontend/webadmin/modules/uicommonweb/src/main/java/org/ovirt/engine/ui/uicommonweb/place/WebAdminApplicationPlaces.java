@@ -92,6 +92,7 @@ public final class WebAdminApplicationPlaces {
     public static final String virtualMachineGuestInfoSubTabPlace = virtualMachineMainPlace + SUB_TAB_PREFIX + "guest_info"; //$NON-NLS-1$
     public static final String virtualMachineEventSubTabPlace = virtualMachineMainPlace + SUB_TAB_PREFIX + "events"; //$NON-NLS-1$
     public static final String virtualMachineErrataSubTabPlace = virtualMachineMainPlace + SUB_TAB_PREFIX + "errata"; //$NON-NLS-1$
+    public static final String virtualMachineDataCenterVmSubTabPlace = virtualMachineMainPlace + SUB_TAB_PREFIX + "datacenter_vms"; //$NON-NLS-1$
 
     // Host
 

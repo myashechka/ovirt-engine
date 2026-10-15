@@ -372,6 +372,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.Su
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineAffinityLabelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineApplicationPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineErrataPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineDataCenterVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineGuestContainerPresenter;
@@ -659,6 +660,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.UserSubTabPanelVi
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineAffinityGroupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineAffinityLabelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineApplicationView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineDataCenterVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineErrataView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineGeneralView;
@@ -1138,6 +1140,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVirtualMachineErrataPresenter.ViewDef.class,
                 SubTabVirtualMachineErrataView.class,
                 SubTabVirtualMachineErrataPresenter.ProxyDef.class);
+        bindPresenter(SubTabVirtualMachineDataCenterVmPresenter.class,
+                SubTabVirtualMachineDataCenterVmPresenter.ViewDef.class,
+                SubTabVirtualMachineDataCenterVmView.class,
+                SubTabVirtualMachineDataCenterVmPresenter.ProxyDef.class);
         bindSingletonPresenterWidget(
                 new TypeLiteral<SearchPanelPresenterWidget<VM, VmListModel<Void>>>() { },
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<VmListModel<Void>>>() { },

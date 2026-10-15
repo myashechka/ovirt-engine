@@ -256,6 +256,8 @@ public final class DetailTabDataIndex {
 
     public static final TabData VIRTUALMACHINE_GUEST_INFO = new GroupedTabData(constants.virtualMachineGuestInfoSubTabLabel(), 9); //$NON-NLS-1$
 
+    public static final TabData VIRTUALMACHINE_DATACENTER_VM = new GroupedTabData(constants.virtualMachineDataCenterVmSubTabLabel(), 12); //$NON-NLS-1$
+
 
     // vnic profiles
 

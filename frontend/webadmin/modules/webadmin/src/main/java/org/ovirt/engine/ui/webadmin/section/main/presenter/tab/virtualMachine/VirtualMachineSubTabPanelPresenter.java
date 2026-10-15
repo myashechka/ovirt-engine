@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
@@ -13,6 +14,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataInde
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.ChangeTabHandler;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.TabData;
@@ -44,6 +46,9 @@ public class VirtualMachineSubTabPanelPresenter extends
     private MainModelProvider<VM, VmListModel<Void>> modelProvider;
 
     @Inject
+    private Provider<VmDataCenterListModel> dataCenterListModelProvider;
+
+    @Inject
     public VirtualMachineSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             VirtualMachineMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
@@ -66,6 +71,7 @@ public class VirtualMachineSubTabPanelPresenter extends
         mapping.put(DetailTabDataIndex.VIRTUALMACHINE_AFFINITY_LABEL, mainModel.getAffinityLabelListModel());
         mapping.put(DetailTabDataIndex.VIRTUALMACHINE_PERMISSION, mainModel.getPermissionListModel());
         mapping.put(DetailTabDataIndex.VIRTUALMACHINE_GUEST_INFO, mainModel.getGuestInfoModel());
+        mapping.put(DetailTabDataIndex.VIRTUALMACHINE_DATACENTER_VM, dataCenterListModelProvider.get());
     }
 
 }
